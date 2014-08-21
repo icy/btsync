@@ -14,6 +14,9 @@ Here is an example
 
     $ chmod 755 ./api.sh
 
+    $ epport BTSYNC_USER=admin
+    $ export BTSYNC_PASSWD="your-very-simple-password"
+
     $ ./api.sh curl_header_get
     {
       "cookie": "xxxxxxxxxxxxx",
