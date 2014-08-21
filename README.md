@@ -36,6 +36,7 @@ Here is an example
 
     $ epport BTSYNC_USER=admin
     $ export BTSYNC_PASSWD="your-very-simple-password"
+    $ # export BTSYNC_HOST="localhost:8888"
 
     $ ./api.sh curl/header/get
     {
