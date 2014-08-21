@@ -159,7 +159,9 @@ speed_get() {
       my $json = decode_json( $jS0n );
       my $recv_speed = $json->{"recv_speed"};
       my $send_speed = $json->{"send_speed"};
-      printf "{\"recv_speed\": \"%s\", \"send_speed\": \"%s\"}\n", $recv_speed, $send_speed;
+      my $speed = $json->{"speed"};
+      printf "{\"recv_speed\": \"%s\", \"send_speed\": \"%s\", \"speed\": \"%s\"}\n",
+        $recv_speed, $send_speed, $speed;
   '
 }
 
