@@ -8,6 +8,22 @@ management console, and you need to register an account at
 
 So I write a `Bash` script, to get data from the `btsync`.
 
+## Methods
+
+I only write stuff that I need.
+You are welcome to contribute to this project!
+
+* `token/get`: return a valid token for `curl`-ing
+* `cookie/get`: return a vallid cookie for `curl`-ing
+* `curl/header/get`: return both cookie and token for your own test
+* `folder/get`: return all shared folders you see in `web` console
+* `folder/setting/get`: return the default folder
+* `os/type/get`: return the type of host's operating system
+* `version/get`: return the version number of `btsync`
+* `setting/get`: return general settings
+
+More method? Okay, stay tuned!.
+
 ## Usage
 
 Here is an example
@@ -66,22 +82,6 @@ All output data is in `JSON` format.
 
 You can get `cookie` and `token` from your browser and feed
 the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
-
-## Methods
-
-I only write stuff that I need.
-You are welcome to contribute to this project!
-
-* `token/get`: return a valid token for `curl`-ing
-* `cookie/get`: return a vallid cookie for `curl`-ing
-* `curl/header/get`: return both cookie and token for your own test
-* `folder/get`: return all shared folders you see in `web` console
-* `folder/setting/get`: return the default folder
-* `os/type/get`: return the type of host's operating system
-* `version/get`: return the version number of `btsync`
-* `setting/get`: return general settings
-
-More method? Okay, stay tuned!.
 
 ## License
 
