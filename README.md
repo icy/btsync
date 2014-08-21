@@ -1,5 +1,7 @@
 ## Description
 
+`Bash`-binding for `btsync` API.
+
 `btsync` (aka `Bittorrent Sync`) can be found [here or there].
 
 `btsync` provides API, but you need to turn off your `web`
