@@ -91,6 +91,17 @@ All output data is in `JSON` format.
 You can get `cookie` and `token` from your browser and feed
 the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
+## How it works
+
+The normal steps of a browser session:
+
+** Basic authentication
+** Generate/Save session's cookie to browser
+** Fetch a valid token from `gui/token.html`
+** Use the `cookie` / `token` pair for any future `JSON` data fetch
+
+Anything more? I don't know.
+
 ## License
 
 This work is released under a MIT license.
