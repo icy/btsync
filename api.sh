@@ -12,7 +12,7 @@ export BTSYNC_HOST="${BTSYNC_HOST:-localhost:8888}"
 export __now="$(date +%s)"
 export __user="${BTSYNC_USER:-admin}"
 export __pass="${BTSYNC_PASSWD:-foobar}"
-export __agent="User-Agent: Mozilla/9.0 (X11; Linux x86_64; rv:99.0) Gecko/30100101 Firefox/31.0"
+export __agent="btsync/cnystb bash binding"
 
 unset  __BTSYNC_ECHO
 
@@ -51,8 +51,6 @@ __curl_get() {
 ## internal methods
 
 __token_get() {
-  __BTSYNC_ECHO=: cookie_get || return 1
-
   __curl_get "gui/token.html?t=$__now" \
     -X POST \
     -H "Cookie: GUID=${BTSYNC_COOKIE}" \
@@ -90,8 +88,6 @@ __validate_method() {
 ## puplic method
 
 curl_header_get() {
-  __BTSYNC_ECHO=: cookie_get || return 1
-  __BTSYNC_ECHO=: token_get || return 1
   echo "{\"cookie\": \"$BTSYNC_COOKIE\", \"token\": \"$BTSYNC_TOKEN\", \"at\": $__now}"
 }
 
@@ -110,8 +106,6 @@ cookie_get() {
 }
 
 token_get() {
-  __BTSYNC_ECHO=: cookie_get || return 1
-
   BTSYNC_TOKEN="${1:-$BTSYNC_TOKEN}"
   if [[ -z "$BTSYNC_TOKEN" ]]; then
     export BTSYNC_TOKEN="$(__token_get)"
@@ -126,15 +120,14 @@ token_get() {
 }
 
 folder_get() {
-  __BTSYNC_ECHO=: cookie_get || return 1
-  __BTSYNC_ECHO=: token_get || return 1
-
   __curl "action=getsyncfolders&discovery=1"
 }
 
 __method="${1:-__exit}" ; shift
 __validate_method $__method || __exit "unknown method"
-
 __method="$(echo $__method | sed -e 's#/#_#g')"
+
+__BTSYNC_ECHO=: cookie_get || exit 1
+__BTSYNC_ECHO=: token_get || exit 1
 
 $__method "$@"
