@@ -144,6 +144,8 @@ folder_setting_get() {
   __curl "getfoldersettings"
 }
 
+## main routine
+
 __method="${1:-__exit}" ; shift
 __validate_method $__method || __exit "unknown method"
 __method="$(echo $__method | sed -e 's#/#_#g')"
