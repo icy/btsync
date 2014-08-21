@@ -4,9 +4,8 @@
 
 `btsync` (aka `Bittorrent Sync`) can be found [here or there].
 
-`btsync` provides API, but you need to turn off your `web`
-management console, and you need to register an account at
-`btsync` home page. Ops, I want both!
+`btsync` provides API, but you need to register an account at
+`btsync` home page. I simply... don't need that:)
 
 So I write a `Bash` script, to get data from the `btsync`.
 
