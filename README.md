@@ -87,6 +87,4 @@ This work is released under a MIT license.
 
 Anh K. Huynh
 
-## Linnks
-
 [1]: http://www.bittorrent.com/sync/downloads
