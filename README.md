@@ -6,7 +6,7 @@
 
 `btsync` provides API, but you need to register an account at
 `btsync` home page. I simply... don't need that:)
-Because I don't use any API service from `btsync`.
+Because I don't use any API service from `BitTorrentSync`.
 
 So I write a `Bash` script, to get data from my `btsync` instance.
 
