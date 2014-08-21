@@ -73,7 +73,7 @@ I only write stuff that I need.
 You are welcome to contribute to this project!
 
 * `token_get`: return a valid token for `curl`-ing
-* `cookie_get`: return a
+* `cookie_get`: return a vallid cookie for `curl`-ing
 * `curl_header_get`: return both cookie and token for your own test
 * `folder_get`: return all shared folders you see in `web` console
 
