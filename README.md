@@ -21,6 +21,7 @@ You are welcome to contribute to this project!
 * `os/type/get`: return the type of host's operating system
 * `version/get`: return the version number of `btsync`
 * `setting/get`: return general settings
+* `speed/get`: return the current download/upload speed
 
 More method? Okay, stay tuned!.
 

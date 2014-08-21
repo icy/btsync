@@ -50,6 +50,11 @@ __curl_get() {
     "$@"
 }
 
+__perl_check() {
+  perl -e 'use JSON' >/dev/null 2>&1 \
+  || __exit "perl/JSON not found"
+}
+
 ## internal methods
 
 __token_get() {
@@ -86,6 +91,7 @@ __validate_method() {
   'folder/setting/get') ;;
   'os/type/get') ;;
   'version/get') ;;
+  'speed/get') ;;
   *) return 1;;
   esac
 }
@@ -142,6 +148,19 @@ version_get() {
 
 folder_setting_get() {
   __curl "getfoldersettings"
+}
+
+speed_get() {
+  __perl_check
+  folder_get \
+  | perl -e '
+      use JSON;
+      my $jS0n = do { local $/; <STDIN> };
+      my $json = decode_json( $jS0n );
+      my $recv_speed = $json->{"recv_speed"};
+      my $send_speed = $json->{"send_speed"};
+      printf "{\"recv_speed\": \"%s\", \"send_speed\": \"%s\"}\n", $recv_speed, $send_speed;
+  '
 }
 
 ## main routine
