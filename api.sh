@@ -22,7 +22,7 @@ __curl() {
   local _action="$1"; shift
 
   ${BTSYNC_CURL:-curl} -Ls \
-    "http://$BTSYNC_HOST/gui/?token=$BTSYNC_TOKEN&$_action&t=$__now" \
+    "http://$BTSYNC_HOST/gui/?token=$BTSYNC_TOKEN&action=$_action&t=$__now" \
     -u "$__user:$__pass" \
     -X POST \
     -H "Host: $BTSYNC_HOST" \
@@ -81,6 +81,9 @@ __validate_method() {
   'cookie/get') ;;
   'folder/get') ;;
   'setting/get') ;;
+  'folder/setting/get') ;;
+  'os/type/get') ;;
+  'version/get') ;;
   *) return 1;;
   esac
 }
@@ -120,7 +123,23 @@ token_get() {
 }
 
 folder_get() {
-  __curl "action=getsyncfolders&discovery=1"
+  __curl "getsyncfolders&discovery=1"
+}
+
+setting_get() {
+  __curl "getsettings"
+}
+
+os_type_get() {
+  __curl "getostype"
+}
+
+version_get() {
+  __curl "getversion"
+}
+
+folder_setting_get() {
+  __curl "getfoldersettings"
 }
 
 __method="${1:-__exit}" ; shift

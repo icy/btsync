@@ -76,6 +76,10 @@ You are welcome to contribute to this project!
 * `cookie/get`: return a vallid cookie for `curl`-ing
 * `curl/header/get`: return both cookie and token for your own test
 * `folder/get`: return all shared folders you see in `web` console
+* `folder/setting/get`: return the default folder
+* `os/type/get`: return the type of host's operating system
+* `version/get`: return the version number of `btsync`
+* `setting/get`: return general settings
 
 More method? Okay, stay tuned!.
 
