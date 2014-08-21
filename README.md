@@ -43,6 +43,10 @@ Here is an example
       "at": 1408615780
     }
 
+    $ ./api.sh key/get
+    { "rosecret": "B3MF5NHDCWI6JTVUU2R3LYMQDAK2QCEXG",
+      "secret": "AHRAXZOGOMZ7B7VIFL5JK7VRH5URQVHMA" }
+
     $ ./api.sh folder/get
     {
       "folders": [
