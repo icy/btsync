@@ -24,6 +24,7 @@ You are welcome to contribute to this project!
 * `version/get`: return the version number of `btsync`
 * `setting/get`: return general settings
 * `speed/get`: return the current download/upload speed
+* `key/get`: return (generate) a valid key pairs
 
 More method? Okay, stay tuned!.
 

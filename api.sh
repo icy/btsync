@@ -92,6 +92,7 @@ __validate_method() {
   'os/type/get') ;;
   'version/get') ;;
   'speed/get') ;;
+  'key/get') ;;
   *) return 1;;
   esac
 }
@@ -148,6 +149,10 @@ version_get() {
 
 folder_setting_get() {
   __curl "getfoldersettings"
+}
+
+key_get() {
+  __curl "generatesecret"
 }
 
 speed_get() {
