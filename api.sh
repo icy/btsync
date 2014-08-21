@@ -66,8 +66,20 @@ __cookie_get() {
 }
 
 __exit() {
-  echo "{\"error\": \"$@\", \"at\": $__now}"
+  echo "{\"error\": \"${@:-missing argument}\", \"at\": $__now}"
   exit 1
+}
+
+## exporting
+
+__validate_method() {
+  case "$@" in
+  'token/get') ;;
+  'curl/header/get') ;;
+  'cookie/get') ;;
+  'folder/get') ;;
+  *) return 1;;
+  esac
 }
 
 ## puplic method
@@ -117,4 +129,9 @@ folder_get() {
     -H 'Accept: application/json, text/javascript, */*; q=0.01'
 }
 
-"$@"
+__method="${1:-__exit}" ; shift
+__validate_method $__method || __exit "unknown method"
+
+__method="$(echo $__method | sed -e 's#/#_#g')"
+
+$__method "$@"
