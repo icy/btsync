@@ -17,14 +17,14 @@ Here is an example
     $ epport BTSYNC_USER=admin
     $ export BTSYNC_PASSWD="your-very-simple-password"
 
-    $ ./api.sh curl_header_get
+    $ ./api.sh curl/header/get
     {
       "cookie": "xxxxxxxxxxxxx",
       "token": "xxxxxxxxxxxxx",
       "at": 1408615780
     }
 
-    $./api.sh folder_get
+    $ ./api.sh folder/get
     {
       "folders": [
         {
@@ -72,10 +72,10 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 I only write stuff that I need.
 You are welcome to contribute to this project!
 
-* `token_get`: return a valid token for `curl`-ing
-* `cookie_get`: return a vallid cookie for `curl`-ing
-* `curl_header_get`: return both cookie and token for your own test
-* `folder_get`: return all shared folders you see in `web` console
+* `token/get`: return a valid token for `curl`-ing
+* `cookie/get`: return a vallid cookie for `curl`-ing
+* `curl/header/get`: return both cookie and token for your own test
+* `folder/get`: return all shared folders you see in `web` console
 
 More method? Okay, stay tuned!.
 
