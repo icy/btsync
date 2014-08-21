@@ -1,6 +1,6 @@
 ## Description
 
-`btsync` (aka `Bittorrent Sync`) can be found at [here or there].
+`btsync` (aka `Bittorrent Sync`) can be found [here or there].
 
 `btsync` provides API, but you need to turn off your `web`
 management console, and you need to register an account at
