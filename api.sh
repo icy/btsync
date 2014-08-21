@@ -19,10 +19,10 @@ unset  __BTSYNC_ECHO
 ## system utils
 
 __curl() {
-  local _section="$1"; shift
+  local _action="$1"; shift
 
   ${BTSYNC_CURL:-curl} -Ls \
-    "http://$BTSYNC_HOST/$_section" \
+    "http://$BTSYNC_HOST/gui/?token=$BTSYNC_TOKEN&$_action&t=$__now" \
     -u "$__user:$__pass" \
     -X POST \
     -H "Host: $BTSYNC_HOST" \
@@ -31,6 +31,7 @@ __curl() {
     -H "Cookie: GUID=${BTSYNC_COOKIE}" \
     -H 'X-Requested-With: XMLHttpRequest' \
     -H 'Accept-Language: en-US,en;q=0.5' \
+    -H 'Accept: application/json, text/javascript, */*; q=0.01' \
     "$@"
 }
 
@@ -52,7 +53,10 @@ __curl_get() {
 __token_get() {
   __BTSYNC_ECHO=: cookie_get || return 1
 
-  __curl "gui/token.html?t=$__now" \
+  __curl_get "gui/token.html?t=$__now" \
+    -X POST \
+    -H "Cookie: GUID=${BTSYNC_COOKIE}" \
+    -H 'X-Requested-With: XMLHttpRequest' \
     -H 'Accept: */*' \
   | sed -e 's/[<>]/\n/g' \
   | grep -iE '[a-z0-9_-]{10,}'
@@ -78,6 +82,7 @@ __validate_method() {
   'curl/header/get') ;;
   'cookie/get') ;;
   'folder/get') ;;
+  'setting/get') ;;
   *) return 1;;
   esac
 }
@@ -124,9 +129,7 @@ folder_get() {
   __BTSYNC_ECHO=: cookie_get || return 1
   __BTSYNC_ECHO=: token_get || return 1
 
-  __curl \
-    "gui/?token=$BTSYNC_TOKEN&action=getsyncfolders&discovery=1&t=$__now" \
-    -H 'Accept: application/json, text/javascript, */*; q=0.01'
+  __curl "action=getsyncfolders&discovery=1"
 }
 
 __method="${1:-__exit}" ; shift
