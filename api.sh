@@ -67,6 +67,7 @@ __input_fetch() {
       | grep -qis "^$_section="
       if [[ $? -eq 0 ]]; then
         echo "$_u" | sed -e "s/^$_section=//"
+        break
       fi
     done
 }
