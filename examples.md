@@ -32,7 +32,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
 ### Create new share folder
 
-  When `key` is not specified, or it is empty (`key=`),
+  When `key` is not specified, or it is empty _(`key=`)_,
   a new random key-pair is generated and used. If the directory
   _(specified by `dir=`)_ doesn't exist on the remote server,
   it will be created.
