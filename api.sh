@@ -218,7 +218,10 @@ token_get() {
 }
 
 folder_get() {
-  __curl "getsyncfolders&discovery=1"
+  local _discovery="$(__input_fetch discovery)"
+  _discovery="${_discovery:-1}"
+
+  __curl "getsyncfolders&discovery=$_discovery"
 }
 
 setting_get() {
