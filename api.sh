@@ -243,7 +243,8 @@ folder_get() {
     for ( keys @{$folders} ) {
       my $d = $folders->[$_];
       if ($d->{"name"} eq $dir) {
-        print(encode_json($d)) . "\n";
+        print encode_json($d);
+        print "\n";
         exit(0);
       }
     }
