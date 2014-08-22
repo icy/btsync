@@ -55,6 +55,34 @@ __perl_check() {
   || __exit "perl/JSON not found"
 }
 
+# See https://gist.github.com/moyashi/4063894
+__url_encode() {
+  awk '
+    BEGIN {
+      for (i = 0; i <= 255; i++) {
+        ord[sprintf("%c", i)] = i
+      }
+    }
+
+    function escape(str, c, len, res) {
+      len = length(str)
+      res = ""
+      for (i = 1; i <= len; i++) {
+        c = substr(str, i, 1);
+        if (c ~ /[0-9A-Za-z]/)
+          res = res c
+        else
+          res = res "%" sprintf("%02X", ord[c])
+        }
+      return res
+    }
+
+    {
+      print escape($0)
+    }
+    '
+}
+
 ## internal methods
 
 __token_get() {
