@@ -31,7 +31,9 @@ More method? Okay, stay tuned!.
 
 ## Usage
 
-Here is an example
+Here is an example.
+You can get `cookie` and `token` from your browser and feed
+the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
     $ chmod 755 ./api.sh
 
@@ -49,6 +51,9 @@ Here is an example
     $ ./api.sh key/get
     { "rosecret": "B3MF5NHDCWI6JTVUU2R3LYMQDAK2QCEXG",
       "secret": "AHRAXZOGOMZ7B7VIFL5JK7VRH5URQVHMA" }
+
+    $ ./api os/dir/create dir=/foo/bar/
+    { "path": "/foo/bar/" }
 
     $ ./api.sh folder/get
     {
@@ -89,9 +94,6 @@ Here is an example
         },
 
 All output data is in `JSON` format.
-
-You can get `cookie` and `token` from your browser and feed
-the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
 ## How it works
 
