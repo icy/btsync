@@ -26,6 +26,7 @@ You are welcome to contribute to this project!
 * `speed/get`: return the current download/upload speed
 * `key/get`: return _(generate)_ a valid key pairs
 * `os/dir/create`: create a directory on remote system _(dangerous!)_
+* `folder/create`: create new share folder
 
 More method? Okay, stay tuned!.
 
