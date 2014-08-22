@@ -206,10 +206,9 @@ os_dir_create() {
     __exit "Missing argument. Please specify dir=<something>"
   fi
 
-  if [[ "${_dir:0:1}" != "" ]]; then
+  if [[ "${_dir:0:1}" != "/" ]]; then
     __exit "Directory name be started by a slash. Otherwise, new directory may be created in a random place."
   fi
-
   _dir="$(echo $_dir | __url_encode)"
 
   __curl "adddir&dir=$_dir"
