@@ -15,6 +15,7 @@ export __pass="${BTSYNC_PASSWD:-foobar}"
 export __agent="btsync/cnystb bash binding"
 
 unset  __BTSYNC_ECHO
+unset  __BTSYNC_PARAMS
 
 ## system utils
 
@@ -53,6 +54,21 @@ __curl_get() {
 __perl_check() {
   perl -e 'use JSON' >/dev/null 2>&1 \
   || __exit "perl/JSON not found"
+}
+
+__input_fetch() {
+  local _section="$1"
+
+  echo "$__BTSYNC_PARAMS" \
+  | sed -e 's/###/\n/g' \
+  | while read _u; do
+      [[ -n "$_u" ]] || continue
+      echo "$_u" \
+      | grep -qis "^$_section="
+      if [[ $? -eq 0 ]]; then
+        echo "$_u" | sed -e "s/^$_section=//"
+      fi
+    done
 }
 
 # See https://gist.github.com/moyashi/4063894
@@ -203,6 +219,11 @@ speed_get() {
 __method="${1:-__exit}" ; shift
 __validate_method $__method || __exit "unknown method"
 __method="$(echo $__method | sed -e 's#/#_#g')"
+
+for u in "$@"; do
+  __BTSYNC_PARAMS="$u###$__BTSYNC_PARAMS"
+done
+export __BTSYNC_PARAMS="${__BTSYNC_PARAMS%###*}"
 
 __BTSYNC_ECHO=: cookie_get || exit 1
 __BTSYNC_ECHO=: token_get || exit 1
