@@ -75,7 +75,7 @@ __cookie_get() {
 }
 
 __exit() {
-  echo "{\"error\": \"${@:-missing argument}\", \"at\": $__now}"
+  echo "{\"error\": 900, \"message\": \"${@:-missing argument}\", \"at\": $__now}"
   exit 1
 }
 
