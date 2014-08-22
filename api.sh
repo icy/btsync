@@ -125,7 +125,9 @@ __exit() {
 }
 
 __input_fetch_dir() {
-  local _dir="$(__input_fetch dir)"
+  local _dir
+
+  _dir="$(__input_fetch dir)"
   if [[ -z "$_dir" ]]; then
     __exit "Missing argument. Please specify dir=<something>"
   fi
@@ -236,7 +238,10 @@ key_get() {
 }
 
 os_dir_create() {
-  local _dir="$(__input_fetch_dir)" || return 1
+  local _dir
+
+  _dir="$(__input_fetch_dir)" \
+  || { echo "$_dir"; exit 1; }
 
   __curl "adddir&dir=$_dir"
 }
