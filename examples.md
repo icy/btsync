@@ -10,7 +10,7 @@ All outputare in `JSON` format.
     $ export BTSYNC_PASSWD="your-very-simple-password"
     $ # export BTSYNC_HOST="localhost:8888"
 
-### Return browser cookie/token
+### Return browser's cookie/token
 
     $ ./api.sh curl/header/get
     {
