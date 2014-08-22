@@ -274,7 +274,7 @@ folder_create() {
     exit
   fi
 
-  _dir="$__tmp"
+  _dir="$(echo "$__tmp" | __url_encode)"
 
   _key="$(__input_fetch_key)"
   if [[ "$?" -ge 1 ]]; then
