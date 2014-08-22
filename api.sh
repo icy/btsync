@@ -137,6 +137,26 @@ __input_fetch_dir() {
   echo $_dir | __url_encode
 }
 
+__input_fetch_key() {
+  local _key="$(__input_fetch key)"
+
+  __perl_check
+
+  if [[ -z "$_key" ]]; then
+    _key="$( \
+    key_get \
+    | perl -e '
+        use JSON;
+        my $pair = decode_json(<>);
+        my $rwkey = $pair->{"secret"};
+        print $rwkey . "\n";
+      '
+    )"
+  fi
+
+  echo $_key | __url_encode
+}
+
 ## exporting
 
 __validate_method() {
@@ -152,6 +172,7 @@ __validate_method() {
   'speed/get') ;;
   'key/get') ;;
   'os/dir/create') ;;
+  'folder/create') ;;
   *) return 1;;
   esac
 }
@@ -218,6 +239,58 @@ os_dir_create() {
   local _dir="$(__input_fetch_dir)" || return 1
 
   __curl "adddir&dir=$_dir"
+}
+
+folder_create() {
+  local _dir __tmp
+  local _key
+
+  _dir="$(os_dir_create)"
+  if [[ $? -ge 1 ]]; then
+    echo "$_dir"
+    exit 1
+  fi
+
+  __tmp="$(echo "$_dir" \
+    | perl -e '
+        use JSON;
+        my $dir = decode_json(<>);
+        my $path = $dir->{"path"};
+        if ($dir->{"error"} ne "") {
+          exit 1;
+        } else {
+          print $path;
+        }
+      '
+    )"
+
+  if [[ -z "$__tmp" ]]; then
+    echo "$_dir"
+    exit
+  fi
+
+  _dir="$__tmp"
+
+  _key="$(__input_fetch_key)"
+  if [[ "$?" -ge 1 ]]; then
+    __exit "Unable to read/create secret key."
+  fi
+
+  __tmp="$(__curl "addsyncfolder&new=1&secret=$_key&name=$_dir")"
+  echo "$__tmp" \
+  | perl -e '
+      use JSON;
+      my $output = decode_json(<>);
+      if ($output->{"error"} ne "0") {
+        exit 1;
+      }
+    '
+
+  if [[ $? -ge 1 ]]; then
+    echo "$__tmp"
+  else
+    echo "$__tmp"
+  fi
 }
 
 speed_get() {
