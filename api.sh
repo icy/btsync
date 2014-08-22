@@ -219,9 +219,38 @@ token_get() {
 
 folder_get() {
   local _discovery="$(__input_fetch discovery)"
+  local _dir="$(__input_fetch dir)"
+
   _discovery="${_discovery:-1}"
 
-  __curl "getsyncfolders&discovery=$_discovery"
+  if [[ -z "$_dir" ]]; then
+    __curl "getsyncfolders&discovery=$_discovery"
+    return
+  fi
+
+  __perl_check
+
+  __curl "getsyncfolders&discovery=$_discovery" \
+  | perl -e '
+    use JSON;
+    use Data::Dumper;
+
+    my $dir = shift(@ARGV);
+    my $jS0n = do { local $/; <STDIN> };
+    my $json = decode_json( $jS0n );
+    my $folders = $json->{"folders"};
+
+    for ( keys @{$folders} ) {
+      my $d = $folders->[$_];
+      if ($d->{"name"} eq $dir) {
+        print(encode_json($d)) . "\n";
+        exit(0);
+      }
+    }
+
+    print "{\"error\": 900, \"message\": \"The path you specified is not valid.\"}\n";
+  ' \
+    -- "$_dir"
 }
 
 setting_get() {
