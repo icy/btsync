@@ -3,11 +3,15 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
 All output data is in `JSON` format.
 
+### Requirement settings for all actions
+
     $ chmod 755 ./api.sh
 
     $ epport BTSYNC_USER=admin
     $ export BTSYNC_PASSWD="your-very-simple-password"
     $ # export BTSYNC_HOST="localhost:8888"
+
+### Return browser cookie/token
 
     $ ./api.sh curl/header/get
     {
@@ -16,12 +20,32 @@ All output data is in `JSON` format.
       "at": 1408615780
     }
 
+### Generate a random key-pair
+
     $ ./api.sh key/get
     { "rosecret": "B3MF5NHDCWI6JTVUU2R3LYMQDAK2QCEXG",
       "secret": "AHRAXZOGOMZ7B7VIFL5JK7VRH5URQVHMA" }
 
-    $ ./api os/dir/create dir=/foo/bar/
+### Create a directory on the remote
+
+    $ ./api.sh os/dir/create dir=/foo/bar/
     { "path": "/foo/bar/" }
+
+
+### Create new share folder
+
+  When `key` is not specified, or it is empty (`key=`),
+  a new random key-pair is generated and used. If the directory
+  _(specified by `dir=`)_ doesn't exist on the remote server,
+  it will be created.
+
+    $ ./api.sh folder/create dir=/foo/bar
+    { "error": 0 }
+
+    $ ./api.sh folder/create dir=/foo/bar key=YOUR_KEY
+    { "error": 0 }
+
+### Get a list of all share folders
 
     $ ./api.sh folder/get
     {
@@ -60,3 +84,5 @@ All output data is in `JSON` format.
             "size": 0,
             "status": "0 B in 0 files"
         },
+        ...
+    }
