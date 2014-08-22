@@ -16,6 +16,7 @@ export __agent="btsync/cnystb bash binding"
 
 unset  __BTSYNC_ECHO
 unset  __BTSYNC_PARAMS
+unset  __BTSYNC_PERL_OK
 
 ## system utils
 
@@ -52,8 +53,11 @@ __curl_get() {
 }
 
 __perl_check() {
+  [[ -z "$__BTSYNC_PERL_OK" ]] || return 0
+
   perl -e 'use JSON' >/dev/null 2>&1 \
   || __exit "perl/JSON not found"
+  export __BTSYNC_PERL_OK=1
 }
 
 __input_fetch() {
@@ -249,6 +253,8 @@ os_dir_create() {
 folder_create() {
   local _dir __tmp
   local _key
+
+  __perl_check
 
   _dir="$(os_dir_create)"
   if [[ $? -ge 1 ]]; then
