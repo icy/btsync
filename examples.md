@@ -1,7 +1,6 @@
 You can get `cookie` and `token` from your browser and feed
 the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
-
-All output data is in `JSON` format.
+All outputare in `JSON` format.
 
 ### Requirement settings for all actions
 
