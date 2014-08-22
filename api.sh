@@ -137,6 +137,7 @@ __validate_method() {
   'version/get') ;;
   'speed/get') ;;
   'key/get') ;;
+  'os/dir/create') ;;
   *) return 1;;
   esac
 }
@@ -197,6 +198,21 @@ folder_setting_get() {
 
 key_get() {
   __curl "generatesecret"
+}
+
+os_dir_create() {
+  local _dir="$(__input_fetch dir)"
+  if [[ -z "$_dir" ]]; then
+    __exit "Missing argument. Please specify dir=<something>"
+  fi
+
+  if [[ "${_dir:0:1}" != "" ]]; then
+    __exit "Directory name be started by a slash. Otherwise, new directory may be created in a random place."
+  fi
+
+  _dir="$(echo $_dir | __url_encode)"
+
+  __curl "adddir&dir=$_dir"
 }
 
 speed_get() {
