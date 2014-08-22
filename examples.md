@@ -44,7 +44,7 @@ All outputare in `JSON` format.
     $ ./api.sh folder/create dir=/foo/bar key=YOUR_KEY
     { "error": 0 }
 
-### Get a list of all share folders
+### Get a list of all shared folders
 
     $ ./api.sh folder/get
     {
