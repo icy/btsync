@@ -45,7 +45,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
 ### Get a list of all shared folders
 
-    $ ./api.sh folder/get
+    $ ./api.sh folder/get # dir=/home/btsync/data/kyanh-iphone4-camera
     {
       "folders": [
         {
