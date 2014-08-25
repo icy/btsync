@@ -566,6 +566,8 @@ folder_host_get() {
 }
 
 # Generate a key-pair, or generate a ro.key from rw.key
+# For encryption support, please read the following article
+#   http://antimatrix.org/BTSync/BTSync_Notes.html#encrypted_folders
 key_get() {
   local _key="$(__input_fetch key)"
   local _encrypt="$(__input_fetch encrypt | __zero_or_one 0)"
