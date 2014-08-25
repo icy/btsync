@@ -202,7 +202,10 @@ __validate_method() {
   esac
 }
 
-# This is as same as __folder_get, but for a single directory
+# This is as same as __folder_get, but for a single directory.
+# Example usage
+#   $0 directory_name
+#   $0 -k key_string
 __folder_get_single() {
   __perl_check
 
@@ -211,16 +214,34 @@ __folder_get_single() {
     use JSON;
 
     my $dir = shift(@ARGV);
+    my $key;
+    my $option = 0;
+    if ($dir eq "-k") {
+      $key = shift(@ARGV);
+      $option = 1;
+    }
     my $jS0n = do { local $/; <STDIN> };
     my $json = decode_json( $jS0n );
     my $folders = $json->{"folders"};
 
-    for ( keys @{$folders} ) {
-      my $d = $folders->[$_];
-      if ($d->{"name"} eq $dir) {
-        print encode_json($d);
-        print "\n";
-        exit(0);
+    if ($option eq 0) {
+      for ( keys @{$folders} ) {
+        my $d = $folders->[$_];
+        if ($d->{"name"} eq $dir) {
+          print encode_json($d);
+          print "\n";
+          exit(0);
+        }
+      }
+    }
+    else {
+      for ( keys @{$folders} ) {
+        my $d = $folders->[$_];
+        if ($d->{"secret"} eq $key || $d->{"readonlysecret"} eq $key) {
+          print encode_json($d);
+          print "\n";
+          exit(0);
+        }
       }
     }
 
@@ -267,15 +288,17 @@ token_get() {
 folder_get() {
   local _discovery="$(__input_fetch discovery)"
   local _dir="$(__input_fetch dir)"
+  local _key="$(__input_fetch key)"
 
   _discovery="${_discovery:-1}"
 
-  if [[ -z "$_dir" ]]; then
+  if [[ -n "$_key" ]]; then
+    __folder_get_single -k "$_key"
+  elif [[ -n "$_dir" ]]; then
+    __folder_get_single "$_dir"
+  else
     __curl "getsyncfolders&discovery=$_discovery"
-    return
   fi
-
-  __folder_get_single "$_dir"
 }
 
 setting_get() {
