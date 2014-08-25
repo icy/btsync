@@ -446,7 +446,6 @@ folder_host_delete() {
           }
         ' -- "$_addr:$_port" \
       | while read _index; do
-          echo >& ":: removing host => $_index"
           __curl "removeknownhosts&name=$_dir&secret=$_key&index=$_index" >/dev/null
         done
       folder_host_get
