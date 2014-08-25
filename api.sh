@@ -213,6 +213,7 @@ __validate_method() {
   'folder/host/get') ;;
   'key/onetime/get') ;;
   'folder/setting/update') ;;
+  'folder/host/create') ;;
   *) return 1;;
   esac
 }
@@ -374,6 +375,32 @@ folder_setting_get() {
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "getfolderpref&name=$_dir&secret=$_key"
+    else
+      __exit "Your key/path is not valid"
+    fi
+  fi
+}
+
+folder_host_create() {
+  local _dir=
+  local _key=
+  local _addr="$(__input_fetch host)"
+  local _port="$(__input_fetch port)"
+
+  if [[ -z "$_addr" || -z "$_port" ]]; then
+    __exit "Port/Host must be specified"
+  fi
+
+  _dir="$(__folder_get_name_and_key)"
+  if [[ "$_dir" == "-|-" ]]; then
+    _exit "Folder path or key must be specified"
+    __curl "getfoldersettings"
+  else
+    _key="${_dir##*|}"
+    _dir="${_dir%%|*}"
+    if [[ -n "$_key" && -n "$_dir" ]]; then
+      __curl "addknownhosts&name=$_dir&secret=$_key&addr=$_addr&port=$_port" > /dev/null
+      folder_host_get
     else
       __exit "Your key/path is not valid"
     fi
