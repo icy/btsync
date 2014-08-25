@@ -365,8 +365,6 @@ folder_setting_get() {
   local _dir=
   local _key=
 
-  [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
-
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
     __curl "getfoldersettings"
@@ -425,8 +423,6 @@ folder_setting_update() {
   local _trash="$(__input_fetch   trash   | __zero_or_one 1)"
   local _host="$(__input_fetch    host    | __zero_or_one 1)"
 
-  [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
-
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
     __exit "Key/Path must be specified"
@@ -445,8 +441,6 @@ folder_setting_update() {
 folder_host_get() {
   local _dir=
   local _key=
-
-  [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
 
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
@@ -469,8 +463,6 @@ key_get() {
 key_onetime_get() {
   local _dir=
   local _key=
-
-  [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
 
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
