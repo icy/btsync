@@ -214,6 +214,7 @@ __validate_method() {
   'key/onetime/get') ;;
   'folder/setting/update') ;;
   'folder/host/create') ;;
+  'folder/host/delete') ;;
   *) return 1;;
   esac
 }
@@ -404,6 +405,56 @@ folder_host_create() {
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "addknownhosts&name=$_dir&secret=$_key&addr=$_addr&port=$_port" > /dev/null
+      folder_host_get
+    else
+      __exit "Your key/path is not valid"
+    fi
+  fi
+}
+
+# NOTE: `btsync` doesn't check for duplication
+folder_host_delete() {
+  local _dir=
+  local _key=
+  local _addr="$(__input_fetch host)"
+  local _port="$(__input_fetch port)"
+
+  __perl_check
+
+  echo "$_addr" | grep -q ":"
+  if [[ $? -eq 0 ]]; then
+    _port="${_addr##*:}"
+    _addr="${_addr%%:*}"
+  fi
+
+  if [[ -z "$_addr" || -z "$_port" ]]; then
+    __exit "Port/Host must be specified"
+  fi
+
+  _dir="$(__folder_get_name_and_key)"
+  if [[ "$_dir" == "-|-" ]]; then
+    _exit "Folder path or key must be specified"
+  else
+    _key="${_dir##*|}"
+    _dir="${_dir%%|*}"
+    if [[ -n "$_key" && -n "$_dir" ]]; then
+      folder_host_get \
+      | perl -e '
+          use JSON;
+          my $check = shift(@ARGV);
+          my $json = decode_json(<>);
+          my $hosts = $json->{"hosts"};
+          for (keys @{$hosts}) {
+            my $h = $hosts->[$_];
+            if ($check eq $h->{"peer"}) {
+              print $h->{"index"} . "\n";
+            }
+          }
+        ' -- "$_addr:$_port" \
+      | while read _index; do
+          echo >& ":: removing host => $_index"
+          __curl "removeknownhosts&name=$_dir&secret=$_key&index=$_index" >/dev/null
+        done
       folder_host_get
     else
       __exit "Your key/path is not valid"

@@ -36,7 +36,13 @@ You are welcome to contribute to this project!
   * `dht`: search in `DHT` network or not. Default: 0
   * `trash`: save deleted files to trash or not. Default: 1
   * `host`: use list of predefined hosts, or not. Default: 1
-* `folder/host/create`: add a new host to list of known host. Parameters:
+* `folder/host/create`: add a new host to list of known hosts.
+  Arguments:
+  * `host`: the host name or IP address
+  * `port`: the port number. `port` can be ommitted if you specify it
+    in `host`, for example, `foobar:1234`.
+* `folder/host/delete`: delete some host from the list of know hosts.
+  Arguments:
   * `host`: the host name or IP address
   * `port`: the port number. `port` can be ommitted if you specify it
     in `host`, for example, `foobar:1234`.
