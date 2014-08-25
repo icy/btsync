@@ -340,13 +340,10 @@ version_get() {
 }
 
 folder_setting_get() {
-  local _discovery="$(__input_fetch discovery)"
   local _dir=
   local _key=
 
   [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
-
-  _discovery="${_discovery:-1}"
 
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
