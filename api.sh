@@ -20,8 +20,15 @@ unset  __BTSYNC_PERL_OK
 
 ## system utils
 
+__debug() {
+  if [[ "$BTSYNC_DEBUG" == "debug" ]]; then
+    echo >&2 "(debug) $@"
+  fi
+}
+
 # The most used `curl` method
 __curl() {
+  __debug "$FUNCNAME: $@"
   local _action="$1"; shift
 
   ${BTSYNC_CURL:-curl} -Ls \
@@ -42,6 +49,7 @@ __curl() {
 
 # A simple GET query
 __curl_get() {
+  __debug "$FUNCNAME: $@"
   local _section="$1"; shift
 
   ${BTSYNC_CURL:-curl} -Ls \
