@@ -16,7 +16,7 @@ I only write stuff that I need.
 You are welcome to contribute to this project!
 
 * `token/get`: return a valid token for `curl`-ing
-* `cookie/get`: return a vallid cookie for `curl`-ing
+* `cookie/get`: return a valid cookie for `curl`-ing
 * `curl/header/get`: return both cookie and token for your own test
 * `folder/get`: return all shared folders you see in `web` console
 * `folder/setting/get`: return the default folder

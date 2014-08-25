@@ -20,6 +20,7 @@ unset  __BTSYNC_PERL_OK
 
 ## system utils
 
+# The most used `curl` method
 __curl() {
   local _action="$1"; shift
 
@@ -39,6 +40,7 @@ __curl() {
   echo
 }
 
+# A simple GET query
 __curl_get() {
   local _section="$1"; shift
 
@@ -52,6 +54,7 @@ __curl_get() {
     "$@"
 }
 
+# Check if `perl/JSON` is working. If `not`, __exit
 __perl_check() {
   [[ -z "$__BTSYNC_PERL_OK" ]] || return 0
 
@@ -60,6 +63,13 @@ __perl_check() {
   export __BTSYNC_PERL_OK=1
 }
 
+# Read user input from $__BTSYNC_PARAMS. This variable is a list
+# of user's input, separated by a `###` group. Example
+#   foobar###dir=/path/to/###
+#
+# To get the `dir` variable, this method is invoked like this
+#   __input_fetch dir
+#
 __input_fetch() {
   local _section="$1"
 
@@ -76,6 +86,7 @@ __input_fetch() {
     done
 }
 
+# Encode the URL before using it in `curl`.
 # See https://gist.github.com/moyashi/4063894
 __url_encode() {
   awk '
@@ -106,6 +117,7 @@ __url_encode() {
 
 ## internal methods
 
+# Return the token a valid token for the session
 __token_get() {
   __curl_get "gui/token.html?t=$__now" \
     -X POST \
@@ -116,6 +128,7 @@ __token_get() {
   | grep -iE '[a-z0-9_-]{10,}'
 }
 
+# Return the cookie for the session
 __cookie_get() {
   __curl_get "gui/" -o /dev/null -c - \
   | grep GUID \
@@ -123,11 +136,14 @@ __cookie_get() {
   [[ "${PIPESTATUS[1]}" == "0" ]]
 }
 
+# Print error message in JSON format, and exit(1)
 __exit() {
   echo "{\"error\": 900, \"message\": \"${@:-missing argument}\", \"at\": $__now}"
   exit 1
 }
 
+# Fetch `dir` variable from user' input. This calls `__input_fetch` method
+# and does some check to make sure `dir` is valid.
 __input_fetch_dir() {
   local _dir
 
@@ -143,6 +159,8 @@ __input_fetch_dir() {
   echo $_dir | __url_encode
 }
 
+# Fetch `key` from user' input, or generate new key pair
+# by invoking `key_get` method.
 __input_fetch_key() {
   local _key="$(__input_fetch key)"
 
@@ -165,6 +183,7 @@ __input_fetch_key() {
 
 ## exporting
 
+# Valide if input method is valid
 __validate_method() {
   case "$@" in
   'token/get') ;;
