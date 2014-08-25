@@ -1,7 +1,7 @@
 You can get `cookie` and `token` from your browser and feed
 the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
-### Requirement for all actions
+### Requirements for all actions
 
     $ chmod 755 ./api.sh
 
@@ -9,7 +9,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
     $ export BTSYNC_PASSWD="your-very-simple-password"
     $ # export BTSYNC_HOST="localhost:8888"
 
-### Return browser's cookie/token
+### Getting browser's cookie/token
 
     $ ./api.sh curl/header/get
     {
@@ -18,7 +18,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
       "at": 1408615780
     }
 
-### Generate a random key-pair
+### Generating a random key-pair or `RO` key from `RW` key
 
     $ ./api.sh key/get
     { "rosecret": "B3MF5NHDCWI6JTVUU2R3LYMQDAK2QCEXG",
@@ -31,13 +31,20 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
        "secret" : "DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE"
     }
 
-### Create a directory on the remote
+    $ ./api.sh key/get key=DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE
+    {
+       "erosecret" : "FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS",
+       "rosecret" : "EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ",
+       "secret" : "DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE"
+    }
+
+### Creating a directory on the remote
 
     $ ./api.sh os/dir/create dir=/foo/bar/
     { "path": "/foo/bar/" }
 
 
-### Create new share folder
+### Creating new share folder
 
   When `key` is not specified, or it is empty _(`key=`)_,
   a new random key-pair is generated and used. If the directory
@@ -50,7 +57,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
     $ ./api.sh folder/create dir=/foo/bar key=YOUR_KEY
     { "error": 0 }
 
-## Update settings for a shared folders
+## Updating settings for a shared folders
 
     $ ./api.sh folder/setting/update key=xxxxxxxxxxxxx lan=1 relay=0
     {
@@ -69,7 +76,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
     }
 
 
-### Get a list of all shared folders
+### Getting a list of (all) shared folders
 
     $ ./api.sh folder/get # dir=/home/btsync/data/kyanh-iphone4-camera
     $ ./api.sh folder/get # key=xxxxxxxxxxxxx
