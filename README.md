@@ -24,7 +24,7 @@ You are welcome to contribute to this project!
 * `version/get`: return the version number of `btsync`
 * `setting/get`: return general settings
 * `speed/get`: return the current download/upload speed
-* `key/get`: return _(generate)_ a valid key pairs
+* `key/get`: return _(generate)_ a valid key pair
 * `os/dir/create`: create a directory on remote system _(dangerous!)_
 * `folder/create`: create new share folder
 * `folder/host/get`: return list of known hosts of a shared folder
