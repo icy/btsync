@@ -233,7 +233,6 @@ folder_get() {
   __curl "getsyncfolders&discovery=$_discovery" \
   | perl -e '
     use JSON;
-    use Data::Dumper;
 
     my $dir = shift(@ARGV);
     my $jS0n = do { local $/; <STDIN> };
