@@ -166,8 +166,6 @@ __input_fetch_dir() {
 __input_fetch_key() {
   local _key="$(__input_fetch key)"
 
-  __perl_check
-
   if [[ -z "$_key" ]]; then
     _key="$( \
     key_get \
@@ -230,8 +228,6 @@ __validate_method() {
 #   If this is the case, the first restul will be returned.
 #   Looking up by key is not good.
 __folder_get_single() {
-  __perl_check
-
   __curl "getsyncfolders&discovery=$_discovery" \
   | perl -e '
     use JSON;
@@ -419,8 +415,6 @@ folder_host_delete() {
   local _addr="$(__input_fetch host)"
   local _port="$(__input_fetch port)"
 
-  __perl_check
-
   echo "$_addr" | grep -q ":"
   if [[ $? -eq 0 ]]; then
     _port="${_addr##*:}"
@@ -541,8 +535,6 @@ folder_create() {
   local _dir __tmp
   local _key
 
-  __perl_check
-
   _dir="$(os_dir_create)"
   if [[ $? -ge 1 ]]; then
     echo "$_dir"
@@ -592,7 +584,6 @@ folder_create() {
 }
 
 speed_get() {
-  __perl_check
   folder_get \
   | perl -e '
       use JSON;
@@ -607,6 +598,8 @@ speed_get() {
 }
 
 ## main routine
+
+__perl_check
 
 __method="${1:-__exit}" ; shift
 __validate_method $__method || __exit "unknown method '$__method'"
