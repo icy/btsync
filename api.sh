@@ -327,8 +327,10 @@ folder_setting_get() {
       | perl -e '
           use JSON;
           my $json = decode_json(<>);
-          print $json->{"name"} . "\n";
+          printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
         ')"
+    _key="${_dir##*|}" # switch to the primary key!
+    _dir="${_dir%%|*}"
   elif [[ -n "$_dir" ]]; then
     _key="$( \
       __folder_get_single "$_dir" \
