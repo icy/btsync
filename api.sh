@@ -208,6 +208,12 @@ __validate_method() {
 # Example usage
 #   $0 directory_name
 #   $0 -k key_string
+# Note:
+#   Multiple shared folders can share the same one-time secret key.
+#   However, only one of them is active; other key will be put the
+#   shared folder in 'pending status' (Pending receipt of master secret).
+#   If this is the case, the first restul will be returned.
+#   Looking up by key is not good.
 __folder_get_single() {
   __perl_check
 
