@@ -213,6 +213,7 @@ __validate_method() {
   'folder/setting/update') ;;
   'folder/host/create') ;;
   'folder/host/delete') ;;
+  'folder/delete') ;;
   *) return 1;;
   esac
 }
@@ -356,6 +357,25 @@ os_type_get() {
 
 version_get() {
   __curl "getversion"
+}
+
+# Note: the first match wins!!!
+folder_delete() {
+  local _dir=
+  local _key=
+
+  _dir="$(__folder_get_name_and_key)"
+  if [[ "$_dir" == "-|-" ]]; then
+    __curl "getfoldersettings"
+  else
+    _key="${_dir##*|}"
+    _dir="${_dir%%|*}"
+    if [[ -n "$_key" && -n "$_dir" ]]; then
+      __curl "removefolder&name=$_dir&secret=$_key"
+    else
+      __exit "Your key/path is not valid"
+    fi
+  fi
 }
 
 folder_setting_get() {

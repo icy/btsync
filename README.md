@@ -66,6 +66,7 @@ You are welcome to contribute to this project!
   Arguments: As in `folder/host/create`. Please note that `btsync` does
   not check for duplication. This method will delete **all** entries
   that match user's criteria.
+* `folder/delete`: Delete a shared folder. Arguments: As in `folder/get`.
 
 More method? Okay, stay tuned!.
 
