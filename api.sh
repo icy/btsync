@@ -399,7 +399,6 @@ folder_host_create() {
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
     _exit "Folder path or key must be specified"
-    __curl "getfoldersettings"
   else
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
