@@ -44,7 +44,8 @@ You are welcome to contribute to this project!
   * `dir`: A remote directory path.
   * `key`: A secret key of the shared folder, of any type.
   You must specify at least `dir` or `key`. If both of them are specified,
-  `key` will take precedence.
+  `dir` will take precedence. _(This is because the path is always unique,
+  while two different shared folder may have a same key.)_
 * `key/onetime/get`: return a on-time key for a shared folder. Arguments:
   As in `folder/host/get`.
 * `folder/setting/update`: update settings for a shared folder. Arguments:

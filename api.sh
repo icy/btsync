@@ -278,15 +278,15 @@ __folder_get_name_and_key() {
   local _dir="$(__input_fetch dir)"
   local _key="$(__input_fetch key)"
 
-  if [[ -n "$_key" ]]; then
-    __folder_get_single -k "$_key" \
+  if [[ -n "$_dir" ]]; then
+    __folder_get_single "$_dir" \
     | perl -e '
         use JSON;
         my $json = decode_json(<>);
         printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
       '
-  elif [[ -n "$_dir" ]]; then
-    __folder_get_single "$_dir" \
+  elif [[ -n "$_key" ]]; then
+    __folder_get_single -k "$_key" \
     | perl -e '
         use JSON;
         my $json = decode_json(<>);
