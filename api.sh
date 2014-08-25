@@ -315,7 +315,35 @@ version_get() {
 }
 
 folder_setting_get() {
-  __curl "getfoldersettings"
+  local _discovery="$(__input_fetch discovery)"
+  local _dir="$(__input_fetch dir)"
+  local _key="$(__input_fetch key)"
+
+  _discovery="${_discovery:-1}"
+
+  if [[ -n "$_key" ]]; then
+    _dir="$( \
+      __folder_get_single -k "$_key" \
+      | perl -e '
+          use JSON;
+          my $json = decode_json(<>);
+          print $json->{"name"} . "\n";
+        ')"
+  elif [[ -n "$_dir" ]]; then
+    _key="$( \
+      __folder_get_single "$_dir" \
+      | perl -e '
+          use JSON;
+          my $json = decode_json(<>);
+          print $json->{"secret"} . "\n";
+        ')"
+  fi
+
+  if [[ -n "$_key" && -n "$_dir" ]]; then
+    __curl "getfolderpref&name=$_dir&secret=$_key"
+  else
+    __curl "getfoldersettings"
+  fi
 }
 
 key_get() {
