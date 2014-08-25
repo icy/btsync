@@ -43,7 +43,7 @@ You are welcome to contribute to this project!
   `key` will take precedence.
 * `key/onetime/get`: return a on-time key for a shared folder. Arguments:
   As in `folder/host/get`.
-* `folder/setting/update`: update settings for a shared folder. Parameters:
+* `folder/setting/update`: update settings for a shared folder. Arguments:
   * `relay`: use relay or not. Default: 0
   * `tracker`: user tracker or not. Default: 0
   * `lan`: search in local net or not. Default: 1
