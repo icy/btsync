@@ -18,8 +18,12 @@ You are welcome to contribute to this project!
 * `token/get`: return a valid token for `curl`-ing
 * `cookie/get`: return a valid cookie for `curl`-ing
 * `curl/header/get`: return both cookie and token for your own test
-* `folder/get`: return all shared folders you see in `web` console
-* `folder/setting/get`: return the default folder or setting of a folder
+* `folder/get`: return all shared folders you see in `web` console,
+  or return information for a single folder.
+  Argument: As in `folder/host/get`. In case both `key/dir` are missing,
+  a list of all shared folder is returned.
+* `folder/setting/get`: return the default folder or setting of a folder.
+  Argument: As in `folder/get`.
 * `os/type/get`: return the type of host's operating system
 * `version/get`: return the version number of `btsync`
 * `setting/get`: return general settings
