@@ -25,10 +25,24 @@ You are welcome to contribute to this project!
 * `setting/get`: return general settings
 * `speed/get`: return the current download/upload speed
 * `key/get`: return _(generate)_ a valid key pair
-* `os/dir/create`: create a directory on remote system _(dangerous!)_
-* `folder/create`: create new share folder
-* `folder/host/get`: return list of known hosts of a shared folder
-* `key/onetime/get`: return a on-time key for a shared folder
+* `os/dir/create`: create a directory on remote system _(dangerous!)_.
+  Argument:
+  * `dir`: A path to directory on the remote server. The `dir` must be
+    started by a slash (`/`). Please note that `btsync` normally accepts
+    arbitary path name, but our script doesn't accept that.
+* `folder/create`: create new share folder. Arguments:
+  * `dir`: As mentioned in `os/dir/create`
+  * `key`: _(Optional)_
+    A secret key (`RW`, `RO`, `ERO`, ...). If not specified,
+    a random keypair of type `RW` will be created.
+* `folder/host/get`: return list of known hosts of a shared folder.
+  Arguments:
+  * `dir`: A remote directory path.
+  * `key`: A secret key of the shared folder, of any type.
+  You must specify at least `dir` or `key`. If both of them are specified,
+  `key` will take precedence.
+* `key/onetime/get`: return a on-time key for a shared folder. Arguments:
+  As in `folder/host/get`.
 * `folder/setting/update`: update settings for a shared folder. Parameters:
   * `relay`: use relay or not. Default: 0
   * `tracker`: user tracker or not. Default: 0
@@ -36,16 +50,17 @@ You are welcome to contribute to this project!
   * `dht`: search in `DHT` network or not. Default: 0
   * `trash`: save deleted files to trash or not. Default: 1
   * `host`: use list of predefined hosts, or not. Default: 1
+  * `dir/key`: as in `folder/host/get`.
 * `folder/host/create`: add a new host to list of known hosts.
   Arguments:
   * `host`: the host name or IP address
   * `port`: the port number. `port` can be ommitted if you specify it
     in `host`, for example, `foobar:1234`.
+  * `dir/key`: As in `folder/host/get`
 * `folder/host/delete`: delete some host from the list of know hosts.
-  Arguments:
-  * `host`: the host name or IP address
-  * `port`: the port number. `port` can be ommitted if you specify it
-    in `host`, for example, `foobar:1234`.
+  Arguments: As in `folder/host/create`. Please note that `btsync` does
+  not check for duplication. This method will delete **all** entries
+  that match user's criteria.
 
 More method? Okay, stay tuned!.
 
