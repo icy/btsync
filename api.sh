@@ -226,9 +226,12 @@ __folder_get_single() {
     my $folders = $json->{"folders"};
 
     if ($option eq 0) {
+      $dir =~ s/\/+$//;
       for ( keys @{$folders} ) {
         my $d = $folders->[$_];
-        if ($d->{"name"} eq $dir) {
+        my $dname = $d->{"name"};
+        $dname =~ s/\/+$//;
+        if ($dname eq $dir) {
           print encode_json($d);
           print "\n";
           exit(0);
