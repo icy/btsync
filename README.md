@@ -53,9 +53,10 @@ You are welcome to contribute to this project!
   * `dir/key`: as in `folder/host/get`.
 * `folder/host/create`: add a new host to list of known hosts.
   Arguments:
-  * `host`: the host name or IP address
-  * `port`: the port number. `port` can be ommitted if you specify it
-    in `host`, for example, `foobar:1234`.
+  * `host`: the host name or IP address, or a hostname/IP followed by a port
+    number, for example, `foobar:1234`.
+  * `port`: the port number. This argument is ignored if `host` already
+    contains a port number.
   * `dir/key`: As in `folder/host/get`
 * `folder/host/delete`: delete some host from the list of know hosts.
   Arguments: As in `folder/host/create`. Please note that `btsync` does
