@@ -273,7 +273,7 @@ __folder_get_name_and_key() {
         printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
       '
   else
-    echo '|'
+    echo '-|-'
   fi
 }
 
@@ -344,16 +344,21 @@ folder_setting_get() {
   local _dir=
   local _key=
 
+  [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
+
   _discovery="${_discovery:-1}"
 
   _dir="$(__folder_get_name_and_key)"
-  _key="${_dir##*|}"
-  _dir="${_dir%%|*}"
-
-  if [[ -n "$_key" && -n "$_dir" ]]; then
-    __curl "getfolderpref&name=$_dir&secret=$_key"
-  else
+  if [[ "$_dir" == "-|-" ]]; then
     __curl "getfoldersettings"
+  else
+    _key="${_dir##*|}"
+    _dir="${_dir%%|*}"
+    if [[ -n "$_key" && -n "$_dir" ]]; then
+      __curl "getfolderpref&name=$_dir&secret=$_key"
+    else
+      __exit "Your key/path is not valid"
+    fi
   fi
 }
 
