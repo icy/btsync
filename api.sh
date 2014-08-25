@@ -202,6 +202,34 @@ __validate_method() {
   esac
 }
 
+# This is as same as __folder_get, but for a single directory
+__folder_get_single() {
+  __perl_check
+
+  __curl "getsyncfolders&discovery=$_discovery" \
+  | perl -e '
+    use JSON;
+
+    my $dir = shift(@ARGV);
+    my $jS0n = do { local $/; <STDIN> };
+    my $json = decode_json( $jS0n );
+    my $folders = $json->{"folders"};
+
+    for ( keys @{$folders} ) {
+      my $d = $folders->[$_];
+      if ($d->{"name"} eq $dir) {
+        print encode_json($d);
+        print "\n";
+        exit(0);
+      }
+    }
+
+    print "{\"error\": 900, \"message\": \"The path you specified is not valid.\"}\n";
+    exit 1;
+  ' \
+    -- "$@"
+}
+
 ## puplic method
 
 curl_header_get() {
@@ -247,29 +275,7 @@ folder_get() {
     return
   fi
 
-  __perl_check
-
-  __curl "getsyncfolders&discovery=$_discovery" \
-  | perl -e '
-    use JSON;
-
-    my $dir = shift(@ARGV);
-    my $jS0n = do { local $/; <STDIN> };
-    my $json = decode_json( $jS0n );
-    my $folders = $json->{"folders"};
-
-    for ( keys @{$folders} ) {
-      my $d = $folders->[$_];
-      if ($d->{"name"} eq $dir) {
-        print encode_json($d);
-        print "\n";
-        exit(0);
-      }
-    }
-
-    print "{\"error\": 900, \"message\": \"The path you specified is not valid.\"}\n";
-  ' \
-    -- "$_dir"
+  __folder_get_single "$_dir"
 }
 
 setting_get() {
