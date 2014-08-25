@@ -186,6 +186,7 @@ __input_fetch_key() {
 # Valide if input method is valid
 __validate_method() {
   case "$@" in
+  '__exit') ;;
   'token/get') ;;
   'curl/header/get') ;;
   'cookie/get') ;;
@@ -402,7 +403,7 @@ speed_get() {
 ## main routine
 
 __method="${1:-__exit}" ; shift
-__validate_method $__method || __exit "unknown method"
+__validate_method $__method || __exit "unknown method '$__method'"
 __method="$(echo $__method | sed -e 's#/#_#g')"
 
 for u in "$@"; do
