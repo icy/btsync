@@ -29,6 +29,13 @@ You are welcome to contribute to this project!
 * `folder/create`: create new share folder
 * `folder/host/get`: return list of known hosts of a shared folder
 * `key/onetime/get`: return a on-time key for a shared folder
+* `folder/setting/update`: update settings for a shared folder. Parameters:
+** `relay`: use relay or not. Default: 0
+** `tracker`: user tracker or not. Default: 0
+** `lan`: search in local net or not. Default: 1
+** `dht`: search in `DHT` network or not. Default: 0
+** `trash`: save deleted files to trash or not. Default: 1
+** `host`: use list of predefined hosts, or not. Default: 1
 
 More method? Okay, stay tuned!.
 

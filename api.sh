@@ -72,18 +72,20 @@ __perl_check() {
 #
 __input_fetch() {
   local _section="$1"
+  local _found=""
 
-  echo "$__BTSYNC_PARAMS" \
-  | sed -e 's/###/\n/g' \
-  | while read _u; do
-      [[ -n "$_u" ]] || continue
-      echo "$_u" \
-      | grep -qis "^$_section="
-      if [[ $? -eq 0 ]]; then
-        echo "$_u" | sed -e "s/^$_section=//"
-        break
-      fi
-    done
+  while read _u; do
+    [[ -n "$_u" ]] || continue
+    echo "$_u" \
+    | grep -qis "^$_section="
+    if [[ $? -eq 0 ]]; then
+      _found="$(echo "$_u" | sed -e "s/^$_section=//" | head -1)"
+      break
+    fi
+  done \
+    < <(echo "$__BTSYNC_PARAMS" | sed -e 's/###/\n/g' )
+
+  echo "$_found"
 }
 
 # Encode the URL before using it in `curl`.
@@ -181,6 +183,16 @@ __input_fetch_key() {
   echo $_key | __url_encode
 }
 
+# Return 0, 1 (valid), or default value (from $1, or 0)
+__zero_or_one() {
+  while read _line; do
+    case "$_line" in
+    "0"|"1") echo $_line ;;
+    *) echo "${1:-0}" ;;
+    esac
+  done
+}
+
 ## exporting
 
 # Valide if input method is valid
@@ -200,6 +212,7 @@ __validate_method() {
   'folder/create') ;;
   'folder/host/get') ;;
   'key/onetime/get') ;;
+  'folder/setting/update') ;;
   *) return 1;;
   esac
 }
@@ -361,6 +374,34 @@ folder_setting_get() {
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "getfolderpref&name=$_dir&secret=$_key"
+    else
+      __exit "Your key/path is not valid"
+    fi
+  fi
+}
+
+folder_setting_update() {
+  local _dir=
+  local _key=
+
+  local _relay="$(__input_fetch   relay   | __zero_or_one 0)"
+  local _tracker="$(__input_fetch tracker | __zero_or_one 0)"
+  local _lan="$(__input_fetch     lan     | __zero_or_one 1)"
+  local _dht="$(__input_fetch     dht     | __zero_or_one 0)"
+  local _trash="$(__input_fetch   trash   | __zero_or_one 1)"
+  local _host="$(__input_fetch    host    | __zero_or_one 1)"
+
+  [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
+
+  _dir="$(__folder_get_name_and_key)"
+  if [[ "$_dir" == "-|-" ]]; then
+    __exit "Key/Path must be specified"
+  else
+    _key="${_dir##*|}"
+    _dir="${_dir%%|*}"
+    if [[ -n "$_key" && -n "$_dir" ]]; then
+      __curl "setfolderpref&name=$_dir&secret=$_key&usehosts=$_host&relay=$_relay&usetracker=$_tracker&searchlan=$_lan&searchdht=$_dht&deletetotrash=$_trash" >/dev/null
+      folder_setting_get
     else
       __exit "Your key/path is not valid"
     fi

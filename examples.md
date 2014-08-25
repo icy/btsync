@@ -43,6 +43,25 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
     $ ./api.sh folder/create dir=/foo/bar key=YOUR_KEY
     { "error": 0 }
 
+## Update settings for a shared folders
+
+    $ ./api.sh folder/setting/update key=xxxxxxxxxxxxx lan=1 relay=0
+    {
+       "folderpref" : {
+          "deletetotrash" : 1,
+          "secrettype" : 1,
+          "readonlysecret" : "xxxxxxxxxxxxx",
+          "iswritable" : 1,
+          "usehosts" : 1,
+          "searchlan" : 1,
+          "searchdht" : 0,
+          "relay" : 0,
+          "canencrypt" : 0,
+          "usetracker" : 0
+       }
+    }
+
+
 ### Get a list of all shared folders
 
     $ ./api.sh folder/get # dir=/home/btsync/data/kyanh-iphone4-camera
