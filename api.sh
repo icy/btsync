@@ -252,6 +252,29 @@ __folder_get_single() {
     -- "$@"
 }
 
+__folder_get_name_and_key() {
+  local _dir="$(__input_fetch dir)"
+  local _key="$(__input_fetch key)"
+
+  if [[ -n "$_key" ]]; then
+    __folder_get_single -k "$_key" \
+    | perl -e '
+        use JSON;
+        my $json = decode_json(<>);
+        printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
+      '
+  elif [[ -n "$_dir" ]]; then
+    __folder_get_single "$_dir" \
+    | perl -e '
+        use JSON;
+        my $json = decode_json(<>);
+        printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
+      '
+  else
+    echo '|'
+  fi
+}
+
 ## puplic method
 
 curl_header_get() {
@@ -316,30 +339,14 @@ version_get() {
 
 folder_setting_get() {
   local _discovery="$(__input_fetch discovery)"
-  local _dir="$(__input_fetch dir)"
-  local _key="$(__input_fetch key)"
+  local _dir=
+  local _key=
 
   _discovery="${_discovery:-1}"
 
-  if [[ -n "$_key" ]]; then
-    _dir="$( \
-      __folder_get_single -k "$_key" \
-      | perl -e '
-          use JSON;
-          my $json = decode_json(<>);
-          printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
-        ')"
-    _key="${_dir##*|}" # switch to the primary key!
-    _dir="${_dir%%|*}"
-  elif [[ -n "$_dir" ]]; then
-    _key="$( \
-      __folder_get_single "$_dir" \
-      | perl -e '
-          use JSON;
-          my $json = decode_json(<>);
-          print $json->{"secret"} . "\n";
-        ')"
-  fi
+  _dir="$(__folder_get_name_and_key)"
+  _key="${_dir##*|}"
+  _dir="${_dir%%|*}"
 
   if [[ -n "$_key" && -n "$_dir" ]]; then
     __curl "getfolderpref&name=$_dir&secret=$_key"
