@@ -186,7 +186,6 @@ __input_fetch_key() {
 # Valide if input method is valid
 __validate_method() {
   case "$@" in
-  '__exit') ;;
   'token/get') ;;
   'curl/header/get') ;;
   'cookie/get') ;;
