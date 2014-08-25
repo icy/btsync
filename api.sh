@@ -381,11 +381,18 @@ folder_setting_get() {
   fi
 }
 
+# NOTE: `btsync` doesn't check for duplication
 folder_host_create() {
   local _dir=
   local _key=
   local _addr="$(__input_fetch host)"
   local _port="$(__input_fetch port)"
+
+  echo "$_addr" | grep -q ":"
+  if [[ $? -eq 0 ]]; then
+    _port="${_addr##*:}"
+    _addr="${_addr%%:*}"
+  fi
 
   if [[ -z "$_addr" || -z "$_port" ]]; then
     __exit "Port/Host must be specified"

@@ -38,7 +38,8 @@ You are welcome to contribute to this project!
   * `host`: use list of predefined hosts, or not. Default: 1
 * `folder/host/create`: add a new host to list of known host. Parameters:
   * `host`: the host name or IP address
-  * `port`: the port number
+  * `port`: the port number. `port` can be ommitted if you specify it
+    in `host`, for example, `foobar:1234`.
 
 More method? Okay, stay tuned!.
 
