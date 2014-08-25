@@ -28,7 +28,14 @@ You are welcome to contribute to this project!
 * `version/get`: return the version number of `btsync`
 * `setting/get`: return general settings
 * `speed/get`: return the current download/upload speed
-* `key/get`: return _(generate)_ a valid key pair
+* `key/get`: return _(generate)_ a valid key pair.
+  Argument:
+  * `encrypt`:
+      Specify if you want to have encrypt support. Default: 0.
+  * `key`: _(Optional)_
+      Specify the `RW` or `ERW` key from that the `RO` or `ERO` key
+      is generated. If `key` is not specified, new random key pair
+      will be generated.
 * `os/dir/create`: create a directory on remote system _(dangerous!)_.
   Argument:
   * `dir`: A path to directory on the remote server. The `dir` must be

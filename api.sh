@@ -297,6 +297,44 @@ __folder_get_name_and_key() {
   fi
 }
 
+__key_push_and_pull() {
+  local _random=
+  local _key="$1" # should be a RW or ERW key
+  local _nkey
+
+  _random="$( \
+    __curl "generatesecret" \
+    | perl -e '
+        use JSON;
+        my $json = decode_json(<>);
+        printf "%s\n", $json->{"secret"};
+      '
+    )"
+  echo "$_random" | grep -Esq '^[A-Z2-7]{33}$'
+  if [[ $? -ge 1 ]]; then
+    echo "|"
+    return
+  fi
+
+  ( export __BTSYNC_PARAMS="dir=/tmp/cnystb/$_random###key=$_key"; folder_create >/dev/null )
+
+  _nkey="$( \
+    export __BTSYNC_PARAMS="dir=/tmp/cnystb/$_random###key=$_key"
+    folder_get \
+    | perl -e '
+        use JSON;
+        my $json = decode_json(<>);
+        my $secret = $json->{"secret"};
+        my $rosecret = $json->{"readonlysecret"};
+        printf "%s|%s\n", $secret, $rosecret;
+      '
+    )"
+
+  echo "$_nkey"
+
+  ( export __BTSYNC_PARAMS="dir=/tmp/cnystb/$_random###key=$_key"; folder_delete >/dev/null )
+}
+
 ## puplic method
 
 curl_header_get() {
@@ -519,8 +557,56 @@ folder_host_get() {
   fi
 }
 
+# Generate a key-pair, or generate a ro.key from rw.key
 key_get() {
-  __curl "generatesecret"
+  local _key="$(__input_fetch key)"
+  local _encrypt="$(__input_fetch encrypt | __zero_or_one 0)"
+
+  if [[ "${_key:0:1}" == "D" ]]; then
+    _encrypt=1
+  fi
+
+  # Generate a new key-pair and return
+  if [[ -z "$_key" ]]; then
+    if [[ "$_encrypt" == 0 ]]; then
+      __curl "generatesecret"
+      return
+    fi
+
+    _key="$( \
+      __curl "generatesecret" \
+      | perl -e '
+          use JSON;
+          my $json = decode_json(<>);
+          printf "%s\n", $json->{"secret"};
+        '
+      )"
+    echo "$_key" | grep -Esq '^[A-Z2-7]{33}$'
+    if [[ $? -ge 1 ]]; then
+      __exit "Unable to generate a random key (the first phase)"
+    fi
+  fi
+
+  if [[ "$_encrypt" == 1 ]]; then
+    _key="D${_key:1:33}"
+  fi
+
+  _key="$(__key_push_and_pull $_key)"
+  if [[ "$_key" == "|" ]]; then
+    __exit "Unable to generate new key. Your key may not be valid."
+  else
+    _rokey="${_key##*|}"
+    _key="${_key%%|*}"
+    if [[ -z "$_rokey" ]]; then
+      _rokey="$_key"
+    fi
+    if [[ "$_encrypt" == 1 ]]; then
+      _erokey="F${_rokey:1:32}"
+      echo "{\"secret\": \"${_key%%|*}\", \"rosecret\": \"${_rokey}\", \"erosecret\": \"${_erokey}\"}"
+    else
+      echo "{\"secret\": \"${_key%%|*}\", \"rosecret\": \"${_rokey}\"}"
+    fi
+  fi
 }
 
 key_onetime_get() {
