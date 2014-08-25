@@ -24,6 +24,13 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
     { "rosecret": "B3MF5NHDCWI6JTVUU2R3LYMQDAK2QCEXG",
       "secret": "AHRAXZOGOMZ7B7VIFL5JK7VRH5URQVHMA" }
 
+    $ ./api.sh key/get encrypt=1  # with encryption support
+    {
+       "erosecret" : "FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS",
+       "rosecret" : "EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ",
+       "secret" : "DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE"
+    }
+
 ### Create a directory on the remote
 
     $ ./api.sh os/dir/create dir=/foo/bar/
