@@ -27,6 +27,7 @@ You are welcome to contribute to this project!
 * `key/get`: return _(generate)_ a valid key pairs
 * `os/dir/create`: create a directory on remote system _(dangerous!)_
 * `folder/create`: create new share folder
+* `folder/host/get`: return list of known hosts of a shared folder
 
 More method? Okay, stay tuned!.
 

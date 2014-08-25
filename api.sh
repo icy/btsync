@@ -198,6 +198,7 @@ __validate_method() {
   'key/get') ;;
   'os/dir/create') ;;
   'folder/create') ;;
+  'folder/host/get') ;;
   *) return 1;;
   esac
 }
@@ -353,6 +354,26 @@ folder_setting_get() {
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "getfolderpref&name=$_dir&secret=$_key"
+    else
+      __exit "Your key/path is not valid"
+    fi
+  fi
+}
+
+folder_host_get() {
+  local _dir=
+  local _key=
+
+  [[ -n "$_dir" || -n "$_key" ]] && _get_default=0
+
+  _dir="$(__folder_get_name_and_key)"
+  if [[ "$_dir" == "-|-" ]]; then
+    __exit "Key/Path must be specified"
+  else
+    _key="${_dir##*|}"
+    _dir="${_dir%%|*}"
+    if [[ -n "$_key" && -n "$_dir" ]]; then
+      __curl "getknownhosts&name=$_dir&secret=$_key"
     else
       __exit "Your key/path is not valid"
     fi
