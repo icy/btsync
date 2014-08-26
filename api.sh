@@ -718,7 +718,7 @@ speed_get() {
 
 __perl_check
 
-__method="${1:-__exit}" ; shift
+__method="${1:-}" ; shift
 __method="$(__validate_method $__method)" \
   || __exit "unknown method '$__method'"
 
