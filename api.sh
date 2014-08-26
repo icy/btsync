@@ -285,6 +285,17 @@ __folder_get_single() {
     -- "$@"
 }
 
+__folder_get_key() {
+  folder_get \
+  | perl -e '
+      use JSON;
+      my $json = decode_json(<>);
+      my $secret = $json->{"secret"};
+      my $rosecret = $json->{"readonlysecret"};
+      printf "%s|%s\n", $secret, $rosecret;
+    '
+}
+
 __folder_get_name_and_key() {
   local _dir="$(__input_fetch dir)"
   local _key="$(__input_fetch key)"
@@ -313,6 +324,16 @@ __key_push_and_pull() {
   local _key="$1" # should be a RW or ERW key
   local _nkey
 
+  _nkey="$( \
+    export __BTSYNC_PARAMS="key=$_key"
+    __folder_get_key
+    )"
+
+  if [[ "$_nkey" != "|" ]]; then
+    echo "$_nkey"
+    return
+  fi
+
   _random="$( \
     __curl "generatesecret" \
     | perl -e '
@@ -331,14 +352,7 @@ __key_push_and_pull() {
 
   _nkey="$( \
     export __BTSYNC_PARAMS="dir=/tmp/cnystb/$_random###key=$_key"
-    folder_get \
-    | perl -e '
-        use JSON;
-        my $json = decode_json(<>);
-        my $secret = $json->{"secret"};
-        my $rosecret = $json->{"readonlysecret"};
-        printf "%s|%s\n", $secret, $rosecret;
-      '
+    __folder_get_key
     )"
 
   echo "$_nkey"
