@@ -285,6 +285,13 @@ __folder_get_single() {
     -- "$@"
 }
 
+# Input : <dir> or <key>
+# Output: <primary>|<ro_key (if any)>
+# Desc. : This method will get a information from a *single* folder,
+#         (by its <key> or <dir>), and prints folder' keys in format
+#           <secret_key>|<rosecret>
+# Note  : If folder is a RO node, <secret_key> is a RO key,
+#         and <rosecret> will be empty
 __folder_get_key() {
   folder_get \
   | perl -e '
@@ -296,6 +303,11 @@ __folder_get_key() {
     '
 }
 
+# Input : <dir> or <key>
+# Output: <dir>|<primary key>
+# Desc. : This method is used by other methods, to get <dir> and <key>
+#         which are required for #btsync api call. Though <dir> is unique,
+#         there is a case when two different folder can share a same <key>.
 __folder_get_name_and_key() {
   local _dir="$(__input_fetch dir)"
   local _key="$(__input_fetch key)"
@@ -319,6 +331,19 @@ __folder_get_name_and_key() {
   fi
 }
 
+# Input : A primary <key> as the first argument ($1)
+# Output: The <rokey> of the <rwkey>, the <erokey> (if any)
+# Desc. : This method is primarily used by <key/get>. The idea is simple.
+#         We will check if the <key> is being used for any folder. If 'yes',
+#         that folder's information will be used to provide other keys.
+#         If 'not', we will create a *random* directory on the server,
+#         which has <key> as primary one. This *random* will be removed
+#         after its key information is disclosured.
+#
+#         To get a *random* key, we call to <generatesecret> method.
+# Note  : This method will generate many empty / temporarily folders
+#           /tmp/cnystb/*
+#         It's important to have a periodly task to remove those directories.
 __key_push_and_pull() {
   local _random=
   local _key="$1" # should be a RW or ERW key
