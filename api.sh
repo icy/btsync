@@ -304,7 +304,7 @@ __folder_get_name_and_key() {
         printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
       '
   else
-    echo '-|-'
+    echo '|'
   fi
 }
 
@@ -414,7 +414,7 @@ folder_delete() {
   local _key=
 
   _dir="$(__folder_get_name_and_key)"
-  if [[ "$_dir" == "-|-" ]]; then
+  if [[ "$_dir" == "|" ]]; then
     __curl "getfoldersettings"
   else
     _key="${_dir##*|}"
@@ -432,7 +432,7 @@ folder_setting_get() {
   local _key=
 
   _dir="$(__folder_get_name_and_key)"
-  if [[ "$_dir" == "-|-" ]]; then
+  if [[ "$_dir" == "|" ]]; then
     __curl "getfoldersettings"
   else
     _key="${_dir##*|}"
@@ -463,7 +463,7 @@ folder_host_create() {
   fi
 
   _dir="$(__folder_get_name_and_key)"
-  if [[ "$_dir" == "-|-" ]]; then
+  if [[ "$_dir" == "|" ]]; then
     __exit "Folder path or key must be specified"
   else
     _key="${_dir##*|}"
@@ -495,7 +495,7 @@ folder_host_delete() {
   fi
 
   _dir="$(__folder_get_name_and_key)"
-  if [[ "$_dir" == "-|-" ]]; then
+  if [[ "$_dir" == "|" ]]; then
     __exit "Folder path or key must be specified"
   else
     _key="${_dir##*|}"
@@ -536,7 +536,7 @@ folder_setting_update() {
   local _host="$(__input_fetch    host    | __zero_or_one 1)"
 
   _dir="$(__folder_get_name_and_key)"
-  if [[ "$_dir" == "-|-" ]]; then
+  if [[ "$_dir" == "|" ]]; then
     __exit "Key/Path must be specified"
   else
     _key="${_dir##*|}"
@@ -555,7 +555,7 @@ folder_host_get() {
   local _key=
 
   _dir="$(__folder_get_name_and_key)"
-  if [[ "$_dir" == "-|-" ]]; then
+  if [[ "$_dir" == "|" ]]; then
     __exit "Key/Path must be specified"
   else
     _key="${_dir##*|}"
@@ -627,7 +627,7 @@ key_onetime_get() {
   local _key=
 
   _dir="$(__folder_get_name_and_key)"
-  if [[ "$_dir" == "-|-" ]]; then
+  if [[ "$_dir" == "|" ]]; then
     __exit "Key/Path must be specified"
   else
     _key="${_dir##*|}"
