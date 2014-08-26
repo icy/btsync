@@ -204,7 +204,7 @@ __zero_or_one() {
 
 # Valide if input method is valid
 __validate_method() {
-  case "$@" in
+  case "$1" in
   'token/get') ;;
   'curl/header/get') ;;
   'cookie/get') ;;
@@ -223,8 +223,9 @@ __validate_method() {
   'folder/host/create') ;;
   'folder/host/delete') ;;
   'folder/delete') ;;
-  *) return 1;;
+  *) echo "$1"; return 1 ;;
   esac
+  echo "$1" | sed -e 's#/#_#g'
 }
 
 # This is as same as __folder_get, but for a single directory.
@@ -718,8 +719,8 @@ speed_get() {
 __perl_check
 
 __method="${1:-__exit}" ; shift
-__validate_method $__method || __exit "unknown method '$__method'"
-__method="$(echo $__method | sed -e 's#/#_#g')"
+__method="$(__validate_method $__method)" \
+  || __exit "unknown method '$__method'"
 
 for u in "$@"; do
   __BTSYNC_PARAMS="$u###$__BTSYNC_PARAMS"
