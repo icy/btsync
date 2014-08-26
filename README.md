@@ -44,6 +44,7 @@ You are welcome to contribute to this project!
     started by a slash (`/`). Please note that `btsync` normally accepts
     arbitary path name, but our script doesn't accept that.
 * `folder/create`: create new share folder. Arguments:
+  * `encrypt`: Create a shared folder with encryption support. Default: 0.
   * `dir`: As mentioned in `os/dir/create`
   * `key`: _(Optional)_
     A secret key (`RW`, `RO`, `ERO`, ...). If not specified,
