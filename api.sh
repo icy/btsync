@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# Purpose: I don't know
+# Purpose: Bash binding for #btsync API
 # Author : It's me, Anh K. Huynh
 # Date   : Today, 2018 Aug 21st
 # License: MIT
+# Source : https://github.com/icy/cnystb
 
 export BTSYNC_TOKEN="${BTSYNC_TOKEN:-}"
 export BTSYNC_COOKIE="${BTSYNC_COOKIE:-}"
