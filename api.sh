@@ -464,7 +464,7 @@ folder_host_create() {
 
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
-    _exit "Folder path or key must be specified"
+    __exit "Folder path or key must be specified"
   else
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
@@ -496,7 +496,7 @@ folder_host_delete() {
 
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "-|-" ]]; then
-    _exit "Folder path or key must be specified"
+    __exit "Folder path or key must be specified"
   else
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
