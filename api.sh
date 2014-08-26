@@ -223,6 +223,7 @@ __validate_method() {
   'folder/host/create') ;;
   'folder/host/delete') ;;
   'folder/delete') ;;
+  'license/update') ;;
   *) echo "$1"; return 1 ;;
   esac
   echo "$1" | sed -e 's#/#_#g'
@@ -712,6 +713,10 @@ speed_get() {
       printf "{\"recv_speed\": \"%s\", \"send_speed\": \"%s\", \"speed\": \"%s\"}\n",
         $recv_speed, $send_speed, $speed;
   '
+}
+
+license_update() {
+  __curl "accept"
 }
 
 ## main routine

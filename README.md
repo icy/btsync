@@ -15,6 +15,8 @@ So I write a `Bash` script, to get data from my `btsync` instance.
 I only write stuff that I need.
 You are welcome to contribute to this project!
 
+* `license/update`: accept `btsync` license. This is a must before
+  you create/update other settings :)
 * `token/get`: return a valid token for `curl`-ing
 * `cookie/get`: return a valid cookie for `curl`-ing
 * `curl/header/get`: return both cookie and token for your own test
