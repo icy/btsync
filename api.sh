@@ -801,31 +801,37 @@ os_dir_create() {
 }
 
 folder_create() {
-  local _dir __tmp
+  local _dir
+  local __tmp
   local _key
+  local _create="$(__input_fetch create)"
 
   __debug "$FUNCNAME: __BTSYNC_PARAMS => $__BTSYNC_PARAMS"
 
-  _dir="$(os_dir_create)"
+  if [[ "$BTSYC_VERSION" == "1.4" ]]; then
+    _dir="$(__input_fetch dir)"
+  else
+    _dir="$(os_dir_create)"
 
-  __tmp="$( \
-    echo "$_dir" \
-    | perl -e '
-        use JSON;
-        my $dir = decode_json(<>);
-        my $path = $dir->{"path"};
-        if ($path) {
-          print $path;
-        }
-        else {
-          exit(1);
-        }
-      '
-    )"
+    __tmp="$( \
+      echo "$_dir" \
+      | perl -e '
+          use JSON;
+          my $dir = decode_json(<>);
+          my $path = $dir->{"path"};
+          if ($path) {
+            print $path;
+          }
+          else {
+            exit(1);
+          }
+        '
+      )"
 
-  if [[ -z "$__tmp" ]]; then
-    echo "$_dir"
-    exit
+    if [[ -z "$__tmp" ]]; then
+      echo "$_dir"
+      exit
+    fi
   fi
 
   _dir="$(echo "$__tmp" | __url_encode)"
