@@ -804,7 +804,6 @@ folder_create() {
   local _dir
   local __tmp
   local _key
-  local _create="$(__input_fetch create)"
 
   __debug "$FUNCNAME: __BTSYNC_PARAMS => $__BTSYNC_PARAMS"
 
