@@ -33,6 +33,8 @@ __debug_cat() {
     while read _line; do
       echo >&2 "(debug) $@: $_line"
     done
+  else
+    cat >/dev/null
   fi
 }
 
