@@ -28,6 +28,14 @@ __debug() {
   fi
 }
 
+__debug_cat() {
+  if [[ "$BTSYNC_DEBUG" == "debug" ]]; then
+    while read _line; do
+      echo >&2 "(debug) $@: $_line"
+    done
+  fi
+}
+
 # The most used `curl` method
 __curl() {
   __debug "$FUNCNAME: $@"
@@ -288,7 +296,7 @@ __validate_method() {
 #   If this is the case, the first restul will be returned.
 #   Looking up by key is not good.
 __folder_get_single() {
-  __debug "$FUNCNAME: fetch foler information => $@"
+  __debug "$FUNCNAME: fetch folder => $@"
 
   __curl "getsyncfolders&discovery=0" \
   | perl -e '
@@ -306,11 +314,13 @@ __folder_get_single() {
     my $folders = $json->{"folders"};
 
     if ($option eq 0) {
-      $dir =~ s/\/+$//;
+      $dir =~ s#/+$##;
+      $dir =~ s#//+#/#;
       for ( keys @{$folders} ) {
         my $d = $folders->[$_];
         my $dname = $d->{$ENV{"__BTSYNC_DIR_ATTR"}};
-        $dname =~ s/\/+$//;
+        $dname =~ s#/+$##;
+        $dname =~ s#//+#/#;
         if ($dname eq $dir) {
           print encode_json($d);
           print "\n";
@@ -444,16 +454,18 @@ __key_push_and_pull() {
     _defdir="/tmp/cnystb/$_random"
   fi
 
-  ( export __BTSYNC_PARAMS="dir=$_defdir###key=$_key"; folder_create >/dev/null )
+  ( export __BTSYNC_PARAMS="dir=$_defdir###key=$_key";
+    folder_create | __debug_cat "$FUNCNAME/folder/create" )
 
   _nkey="$( \
-    export __BTSYNC_PARAMS="dir=$_defdir###key=$_key"
+    export __BTSYNC_PARAMS="dir=$_defdir"
     __folder_get_key
     )"
 
   echo "$_nkey"
 
-  ( export __BTSYNC_PARAMS="dir=$_defdir###key=$_key"; folder_delete >/dev/null )
+  ( export __BTSYNC_PARAMS="dir=$_defdir";
+    folder_delete | __debug_cat "$FUNCNAME/folder/delete" )
 }
 
 ## puplic method
@@ -523,6 +535,8 @@ folder_delete() {
   local _dir=
   local _key=
 
+  __debug "$FUNCNAME: __BTSYNC_PARAMS => $__BTSYNC_PARAMS"
+
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "|" ]]; then
     __exit "Folder not exist"
@@ -530,6 +544,7 @@ folder_delete() {
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
+      # FIXME: `name=` may be changed to `path=` in the future
       __curl "removefolder&name=$_dir&secret=$_key"
     else
       __exit "Your key/path is not valid"
@@ -775,7 +790,7 @@ key_onetime_get() {
 os_dir_create() {
   local _dir
 
-  __debug "$FUNCNAME: create on remote => $_dir"
+  __debug "$FUNCNAME: create on remote => $__BTSYNC_PARAMS"
 
   _dir="$(__input_fetch_dir)" \
   || { echo "$_dir"; exit 1; }
@@ -786,6 +801,8 @@ os_dir_create() {
 folder_create() {
   local _dir __tmp
   local _key
+
+  __debug "$FUNCNAME: __BTSYNC_PARAMS => $__BTSYNC_PARAMS"
 
   _dir="$(os_dir_create)"
 
