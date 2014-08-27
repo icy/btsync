@@ -9,6 +9,7 @@
 export BTSYNC_TOKEN="${BTSYNC_TOKEN:-}"
 export BTSYNC_COOKIE="${BTSYNC_COOKIE:-}"
 export BTSYNC_HOST="${BTSYNC_HOST:-localhost:8888}"
+export BTSYNC_VERSION=
 
 export __now="$(date +%s)"
 export __user="${BTSYNC_USER:-admin}"
@@ -192,12 +193,59 @@ __input_fetch_key() {
 
 # Return 0, 1 (valid), or default value (from $1, or 0)
 __zero_or_one() {
+  local _zero=0
+  local _one=1
+
+  case "$1" in
+    ":B") _zero="false"; _one="true" ; shift ;;
+    ":N") shift;
+  esac
+
   while read _line; do
     case "$_line" in
-    "0"|"1") echo $_line ;;
-    *) echo "${1:-0}" ;;
+    "0") echo $_zero ;;
+    "1") echo $_one ;;
+    *)
+      if [[ "$1" == "0" ]]; then
+        echo "$_zero"
+      else
+        echo "$_one"
+      fi
+      ;;
     esac
   done
+}
+
+__version_detect() {
+  local _ret=
+
+  __curl_get 'gui/js/license.js' \
+    | grep -q 'licenseagreed'
+
+  _ret=( "${PIPESTATUS[@]}" )
+
+  if [[ "${_ret[0]}${_ret[1]}" == "00" ]]; then
+    export BTSYNC_VERSION="1.4"
+    export __BTSYNC_DIR_ATTR="path"
+  elif [[ "${_ret[0]}" == "0" ]]; then
+    export BTSYNC_VERSION="1.3"
+    export __BTSYNC_DIR_ATTR="name"
+  else
+    export BTSYNC_VERSION=""
+  fi
+
+  __debug "$FUNCNAME: BTSYNC_VERSION = $BTSYNC_VERSION"
+
+  if [[ -z "$BTSYNC_VERSION" ]]; then
+    __exit "Unable to detect btsync version"
+  fi
+}
+
+__version_selector() {
+  case $BTSYNC_VERSION in
+    "1.3") echo "$1" ;;
+    "1.4") echo "$2" ;;
+  esac
 }
 
 ## exporting
@@ -240,7 +288,9 @@ __validate_method() {
 #   If this is the case, the first restul will be returned.
 #   Looking up by key is not good.
 __folder_get_single() {
-  __curl "getsyncfolders&discovery=$_discovery" \
+  __debug "$FUNCNAME: fetch foler information => $@"
+
+  __curl "getsyncfolders&discovery=0" \
   | perl -e '
     use JSON;
 
@@ -259,7 +309,7 @@ __folder_get_single() {
       $dir =~ s/\/+$//;
       for ( keys @{$folders} ) {
         my $d = $folders->[$_];
-        my $dname = $d->{"name"};
+        my $dname = $d->{$ENV{"__BTSYNC_DIR_ATTR"}};
         $dname =~ s/\/+$//;
         if ($dname eq $dir) {
           print encode_json($d);
@@ -317,14 +367,14 @@ __folder_get_name_and_key() {
     | perl -e '
         use JSON;
         my $json = decode_json(<>);
-        printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
+        printf "%s|%s\n", $json->{$ENV{"__BTSYNC_DIR_ATTR"}}, $json->{"secret"};
       '
   elif [[ -n "$_key" ]]; then
     __folder_get_single -k "$_key" \
     | perl -e '
         use JSON;
         my $json = decode_json(<>);
-        printf "%s|%s\n", $json->{"name"}, $json->{"secret"};
+        printf "%s|%s\n", $json->{$ENV{"__BTSYNC_DIR_ATTR"}}, $json->{"secret"};
       '
   else
     echo '|'
@@ -348,6 +398,7 @@ __key_push_and_pull() {
   local _random=
   local _key="$1" # should be a RW or ERW key
   local _nkey
+  local _defdir=""
 
   _nkey="$( \
     export __BTSYNC_PARAMS="key=$_key"
@@ -364,25 +415,45 @@ __key_push_and_pull() {
     | perl -e '
         use JSON;
         my $json = decode_json(<>);
-        printf "%s\n", $json->{"secret"};
+        printf "%s\n", $json->{"secret"} || $json->{"value"}->{"secret"};
       '
     )"
+
+  __debug "$FUNCNAME: random value => $_random"
+
   echo "$_random" | grep -Esq '^[A-Z2-7]{33}$'
   if [[ $? -ge 1 ]]; then
     echo "|"
     return
   fi
 
-  ( export __BTSYNC_PARAMS="dir=/tmp/cnystb/$_random###key=$_key"; folder_create >/dev/null )
+  if [[ "$BTSYNC_VERSION" == "1.4" ]]; then
+    _defdir="$( \
+      export __BTSYNC_PARAMS="";
+      folder_setting_get \
+      | perl -e '
+          use JSON;
+          my $json = decode_json(<>);
+          print $json->{"folders"}->{"default"};
+        '
+      )"
+
+    __debug "$FUNCNAME: default remote directory => $_defdir"
+    _defdir="$_defdir/.cnystb/$_random"
+  else
+    _defdir="/tmp/cnystb/$_random"
+  fi
+
+  ( export __BTSYNC_PARAMS="dir=$_defdir###key=$_key"; folder_create >/dev/null )
 
   _nkey="$( \
-    export __BTSYNC_PARAMS="dir=/tmp/cnystb/$_random###key=$_key"
+    export __BTSYNC_PARAMS="dir=$_defdir###key=$_key"
     __folder_get_key
     )"
 
   echo "$_nkey"
 
-  ( export __BTSYNC_PARAMS="dir=/tmp/cnystb/$_random###key=$_key"; folder_delete >/dev/null )
+  ( export __BTSYNC_PARAMS="dir=$_defdir###key=$_key"; folder_delete >/dev/null )
 }
 
 ## puplic method
@@ -436,15 +507,15 @@ folder_get() {
 }
 
 setting_get() {
-  __curl "getsettings"
+  __curl "$(__version_selector getsettings settings)"
 }
 
 os_type_get() {
-  __curl "getostype"
+  __curl "$(__version_selector getostype getsysteminfo)"
 }
 
 version_get() {
-  __curl "getversion"
+  __curl "$(__version_selector getversion version)"
 }
 
 # Note: the first match wins!!!
@@ -454,7 +525,7 @@ folder_delete() {
 
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "|" ]]; then
-    __curl "getfoldersettings"
+    __exit "Folder not exist"
   else
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
@@ -477,7 +548,7 @@ folder_setting_get() {
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
-      __curl "getfolderpref&name=$_dir&secret=$_key"
+      __curl "$(__version_selector getfolderpref folderpref)&name=$_dir&secret=$_key"
     else
       __exit "Your key/path is not valid"
     fi
@@ -508,7 +579,7 @@ folder_host_create() {
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
-      __curl "addknownhosts&name=$_dir&secret=$_key&addr=$_addr&port=$_port" > /dev/null
+      __curl "$(__version_selector addknownhosts addknownhost)&name=$_dir&secret=$_key&addr=$_addr&port=$_port" > /dev/null
       folder_host_get
     else
       __exit "Your key/path is not valid"
@@ -540,22 +611,37 @@ folder_host_delete() {
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
-      folder_host_get \
-      | perl -e '
-          use JSON;
-          my $check = shift(@ARGV);
-          my $json = decode_json(<>);
-          my $hosts = $json->{"hosts"};
-          for (keys @{$hosts}) {
-            my $h = $hosts->[$_];
-            if ($check eq $h->{"peer"}) {
-              print $h->{"index"} . "\n";
-            }
-          }
-        ' -- "$_addr:$_port" \
-      | while read _index; do
-          __curl "removeknownhosts&name=$_dir&secret=$_key&index=$_index" >/dev/null
-        done
+      while :; do
+        _index="$( \
+          folder_host_get \
+          | perl -e '
+              use JSON;
+              my $check = shift(@ARGV);
+              my $json = decode_json(<>);
+              my $hosts;
+              if ($ENV{"BTSYNC_VERSION"} eq "1.3") {
+                $hosts = $json->{"hosts"};
+              }
+              else {
+                $hosts = $json->{"value"};
+              }
+              for (keys @{$hosts}) {
+                my $h = $hosts->[$_];
+                if ($check eq $h->{"peer"}) {
+                  print $h->{"index"} . "\n";
+                  exit(0);
+                }
+              }
+            ' -- "$_addr:$_port"
+          )"
+        if [[ -z "$_index" ]]; then
+          break
+        fi
+
+        __debug "$FUNCNAME: delete host => $_addr:$_port, index = $_index"
+        __curl "removeknownhosts&name=$_dir&secret=$_key&index=$_index" >/dev/null
+      done
+
       folder_host_get
     else
       __exit "Your key/path is not valid"
@@ -566,13 +652,16 @@ folder_host_delete() {
 folder_setting_update() {
   local _dir=
   local _key=
+  local _type=":N"
 
-  local _relay="$(__input_fetch   relay   | __zero_or_one 0)"
-  local _tracker="$(__input_fetch tracker | __zero_or_one 0)"
-  local _lan="$(__input_fetch     lan     | __zero_or_one 1)"
-  local _dht="$(__input_fetch     dht     | __zero_or_one 0)"
-  local _trash="$(__input_fetch   trash   | __zero_or_one 1)"
-  local _host="$(__input_fetch    host    | __zero_or_one 1)"
+  [[ "$BTSYNC_VERSION" == "1.4" ]] && _type=":B"
+
+  local _relay="$(__input_fetch   relay   | __zero_or_one $_type 0)"
+  local _tracker="$(__input_fetch tracker | __zero_or_one $_type 0)"
+  local _lan="$(__input_fetch     lan     | __zero_or_one $_type 1)"
+  local _dht="$(__input_fetch     dht     | __zero_or_one $_type 0)"
+  local _trash="$(__input_fetch   trash   | __zero_or_one $_type 1)"
+  local _host="$(__input_fetch    host    | __zero_or_one $_type 1)"
 
   _dir="$(__folder_get_name_and_key)"
   if [[ "$_dir" == "|" ]]; then
@@ -582,6 +671,7 @@ folder_setting_update() {
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "setfolderpref&name=$_dir&secret=$_key&usehosts=$_host&relay=$_relay&usetracker=$_tracker&searchlan=$_lan&searchdht=$_dht&deletetotrash=$_trash" >/dev/null
+
       folder_setting_get
     else
       __exit "Your key/path is not valid"
@@ -600,7 +690,7 @@ folder_host_get() {
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
-      __curl "getknownhosts&name=$_dir&secret=$_key"
+      __curl "$(__version_selector getknownhosts knownhosts)&name=$_dir&secret=$_key"
     else
       __exit "Your key/path is not valid"
     fi
@@ -630,9 +720,12 @@ key_get() {
       | perl -e '
           use JSON;
           my $json = decode_json(<>);
-          printf "%s\n", $json->{"secret"};
+          printf "%s\n", $json->{"secret"} || $json->{"value"}->{"secret"};
         '
       )"
+
+    __debug "$FUNCNAME: primary key => $_key"
+
     echo "$_key" | grep -Esq '^[A-Z2-7]{33}$'
     if [[ $? -ge 1 ]]; then
       __exit "Unable to generate a random key (the first phase)"
@@ -682,6 +775,8 @@ key_onetime_get() {
 os_dir_create() {
   local _dir
 
+  __debug "$FUNCNAME: create on remote => $_dir"
+
   _dir="$(__input_fetch_dir)" \
   || { echo "$_dir"; exit 1; }
 
@@ -693,20 +788,18 @@ folder_create() {
   local _key
 
   _dir="$(os_dir_create)"
-  if [[ $? -ge 1 ]]; then
-    echo "$_dir"
-    exit 1
-  fi
 
-  __tmp="$(echo "$_dir" \
+  __tmp="$( \
+    echo "$_dir" \
     | perl -e '
         use JSON;
         my $dir = decode_json(<>);
         my $path = $dir->{"path"};
-        if ($dir->{"error"} ne "") {
-          exit 1;
-        } else {
+        if ($path) {
           print $path;
+        }
+        else {
+          exit(1);
         }
       '
     )"
@@ -723,7 +816,7 @@ folder_create() {
     __exit "Unable to read/create secret key."
   fi
 
-  __tmp="$(__curl "addsyncfolder&new=1&secret=$_key&name=$_dir")"
+  __tmp="$(__curl "addsyncfolder&new=1&secret=$_key&${__BTSYNC_DIR_ATTR}=$_dir")"
   echo "$__tmp" \
   | perl -e '
       use JSON;
@@ -749,18 +842,25 @@ speed_get() {
       my $recv_speed = $json->{"recv_speed"};
       my $send_speed = $json->{"send_speed"};
       my $speed = $json->{"speed"};
-      printf "{\"recv_speed\": \"%s\", \"send_speed\": \"%s\", \"speed\": \"%s\"}\n",
-        $recv_speed, $send_speed, $speed;
+      if (ref($speed) eq "HASH" ) {
+        printf "{\"up_speed\": \"%s\", \"down_speed\": \"%s\"}\n",
+          $speed->{"upspeed"}, $speed->{"downspeed"};
+      }
+      else {
+        printf "{\"recv_speed\": \"%s\", \"send_speed\": \"%s\", \"speed\": \"%s\"}\n",
+          $recv_speed, $send_speed, $speed;
+      }
   '
 }
 
 license_update() {
-  __curl "accept"
+  __curl "$(__version_selector accept licenseagreed)"
 }
 
 ## main routine
 
 __perl_check
+__version_detect
 
 __method="${1:-}" ; shift
 __method="$(__validate_method $__method)" \
