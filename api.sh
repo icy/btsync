@@ -686,7 +686,8 @@ folder_setting_update() {
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
-      __curl "setfolderpref&name=$_dir&secret=$_key&usehosts=$_host&relay=$_relay&usetracker=$_tracker&searchlan=$_lan&searchdht=$_dht&deletetotrash=$_trash" >/dev/null
+      __curl "setfolderpref&name=$_dir&secret=$_key&usehosts=$_host&relay=$_relay&usetracker=$_tracker&searchlan=$_lan&searchdht=$_dht&deletetotrash=$_trash" \
+        | __debug_cat "$FUNCNAME/folder/pref/set"
 
       folder_setting_get
     else
