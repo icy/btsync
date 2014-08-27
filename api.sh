@@ -594,7 +594,8 @@ folder_host_create() {
     _key="${_dir##*|}"
     _dir="${_dir%%|*}"
     if [[ -n "$_key" && -n "$_dir" ]]; then
-      __curl "$(__version_selector addknownhosts addknownhost)&name=$_dir&secret=$_key&addr=$_addr&port=$_port" > /dev/null
+      __curl "$(__version_selector addknownhosts addknownhost)&name=$_dir&secret=$_key&addr=$_addr&port=$_port" \
+        | __debug_cat "$FUNCNAME/host/add"
       folder_host_get
     else
       __exit "Your key/path is not valid"
@@ -653,8 +654,8 @@ folder_host_delete() {
           break
         fi
 
-        __debug "$FUNCNAME: delete host => $_addr:$_port, index = $_index"
-        __curl "removeknownhosts&name=$_dir&secret=$_key&index=$_index" >/dev/null
+        __curl "removeknownhosts&name=$_dir&secret=$_key&index=$_index" \
+          | __debug_cat "$FUNCNAME/host/delete $_addr:$_port, index $_index"
       done
 
       folder_host_get
