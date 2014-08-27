@@ -847,8 +847,8 @@ speed_get() {
           $speed->{"upspeed"}, $speed->{"downspeed"};
       }
       else {
-        printf "{\"recv_speed\": \"%s\", \"send_speed\": \"%s\", \"speed\": \"%s\"}\n",
-          $recv_speed, $send_speed, $speed;
+        printf "{\"down_speed\": \"%s\", \"up_speed\": \"%s\"}\n",
+          $recv_speed, $send_speed;
       }
   '
 }
