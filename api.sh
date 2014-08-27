@@ -186,6 +186,7 @@ __input_fetch_key() {
 
   if [[ -z "$_key" ]]; then
     _key="$( \
+    export __BTSYNC_PARAMS="$__BTSYNC_PARAMS###master=1"
     key_get \
     | perl -e '
         use JSON;
@@ -720,6 +721,7 @@ folder_host_get() {
 key_get() {
   local _key="$(__input_fetch key)"
   local _encrypt="$(__input_fetch encrypt | __zero_or_one 0)"
+  local _master="$(__input_fetch master)"
 
   if [[ "${_key:0:1}" == "D" ]]; then
     _encrypt=1
@@ -728,7 +730,14 @@ key_get() {
   # Generate a new key-pair and return
   if [[ -z "$_key" ]]; then
     if [[ "$_encrypt" == 0 ]]; then
-      __curl "generatesecret"
+      __curl "generatesecret" \
+      | perl -e '
+          use JSON;
+          my $json = decode_json(<>);
+          printf "{\"secret\": \"%s\", \"rosecret\": \"%s\"}\n",
+            $json->{"secret"} || $json->{"value"}->{"secret"},
+            $json->{"rosecret"} || $json->{"value"}->{"rosecret"};
+        '
       return
     fi
 
@@ -751,6 +760,11 @@ key_get() {
 
   if [[ "$_encrypt" == 1 ]]; then
     _key="D${_key:1:33}"
+  fi
+
+  if [[ "$_master" == "1" ]]; then
+    echo "{\"secret\": \"${_key%%|*}\"}"
+    return
   fi
 
   _key="$(__key_push_and_pull $_key)"
@@ -835,7 +849,7 @@ folder_create() {
 
   _dir="$(echo "$__tmp" | __url_encode)"
 
-  _key="$(__input_fetch_key)"
+  _key="$(export __BTSYNC_PARAMS="$__BTSYNC_PARAMS###master=1"; __input_fetch_key)"
   if [[ "$?" -ge 1 ]]; then
     __exit "Unable to read/create secret key."
   fi
