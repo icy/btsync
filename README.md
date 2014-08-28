@@ -39,6 +39,7 @@ You are welcome to contribute to this project!
       is generated. If `key` is not specified, new random key pair
       will be generated.
   * `master`: Generate only the master key. This will be very fast.
+      Default: 0.
 * `os/dir/create`: create a directory on remote system _(dangerous!)_.
   Argument:
   * `dir`: A path to directory on the remote server. The `dir` must be
