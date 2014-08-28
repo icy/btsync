@@ -553,7 +553,7 @@ folder_delete() {
     __exit "Folder not exist"
   else
     _key="${_dir##*|}"
-    _dir="${_dir%%|*}"
+    _dir="$(echo "${_dir%%|*}" | __url_encode)"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       # FIXME: `name=` may be changed to `path=` in the future
       __curl "removefolder&name=$_dir&secret=$_key"
@@ -572,7 +572,7 @@ folder_setting_get() {
     __curl "getfoldersettings"
   else
     _key="${_dir##*|}"
-    _dir="${_dir%%|*}"
+    _dir="$(echo "${_dir%%|*}" | __url_encode)"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "$(__version_selector getfolderpref folderpref)&name=$_dir&secret=$_key"
     else
@@ -603,7 +603,7 @@ folder_host_create() {
     __exit "Folder path or key must be specified"
   else
     _key="${_dir##*|}"
-    _dir="${_dir%%|*}"
+    _dir="$(echo "${_dir%%|*}" | __url_encode)"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "$(__version_selector addknownhosts addknownhost)&name=$_dir&secret=$_key&addr=$_addr&port=$_port" \
         | __debug_cat "$FUNCNAME/host/add"
@@ -636,7 +636,7 @@ folder_host_delete() {
     __exit "Folder path or key must be specified"
   else
     _key="${_dir##*|}"
-    _dir="${_dir%%|*}"
+    _dir="$(echo "${_dir%%|*}" | __url_encode)"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       while :; do
         _index="$( \
@@ -695,7 +695,7 @@ folder_setting_update() {
     __exit "Key/Path must be specified"
   else
     _key="${_dir##*|}"
-    _dir="${_dir%%|*}"
+    _dir="$(echo "${_dir%%|*}" | __url_encode)"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "setfolderpref&name=$_dir&secret=$_key&usehosts=$_host&relay=$_relay&usetracker=$_tracker&searchlan=$_lan&searchdht=$_dht&deletetotrash=$_trash" \
         | __debug_cat "$FUNCNAME/folder/pref/set"
@@ -716,7 +716,7 @@ folder_host_get() {
     __exit "Key/Path must be specified"
   else
     _key="${_dir##*|}"
-    _dir="${_dir%%|*}"
+    _dir="$(echo "${_dir%%|*}" | __url_encode)"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "$(__version_selector getknownhosts knownhosts)&name=$_dir&secret=$_key"
     else
@@ -849,7 +849,7 @@ key_onetime_get() {
     __exit "Key/Path must be specified"
   else
     _key="${_dir##*|}"
-    _dir="${_dir%%|*}"
+    _dir="$(echo "${_dir%%|*}" | __url_encode)"
     if [[ -n "$_key" && -n "$_dir" ]]; then
       __curl "generateroinvite&name=$_dir&secret=$_key"
     else
