@@ -506,11 +506,9 @@ token_get() {
 }
 
 folder_get() {
-  local _discovery="$(__input_fetch discovery)"
+  local _discovery="$(__input_fetch discovery | __zero_or_one 1)"
   local _dir="$(__input_fetch dir)"
   local _key="$(__input_fetch key)"
-
-  _discovery="${_discovery:-1}"
 
   if [[ -n "$_key" ]]; then
     __folder_get_single -k "$_key"
