@@ -193,7 +193,7 @@ __input_fetch_key() {
     | perl -e '
         use JSON;
         my $pair = decode_json(<>);
-        my $rwkey = $pair->{"secret"};
+        my $rwkey = $pair->{"read_write"};
         print $rwkey . "\n";
       '
     )"
@@ -778,7 +778,7 @@ key_get() {
   elif [[ -n "${_key}" ]]; then
     _encrypt=0
     _master=0
-    echo "{\"rokey\": \"$_key\"}"
+    echo "{\"read_only\": \"$_key\"}"
     return
   fi
 
@@ -789,7 +789,7 @@ key_get() {
       | perl -e '
           use JSON;
           my $json = decode_json(<>);
-          printf "{\"secret\": \"%s\", \"rosecret\": \"%s\"}\n",
+          printf "{\"read_write\": \"%s\", \"read_only\": \"%s\"}\n",
             $json->{"secret"} || $json->{"value"}->{"secret"},
             $json->{"rosecret"} || $json->{"value"}->{"rosecret"};
         '
@@ -818,7 +818,7 @@ key_get() {
   fi
 
   if [[ "$_master" == "1" ]]; then
-    echo "{\"secret\": \"${_key%%|*}\"}"
+    echo "{\"read_write\": \"${_key%%|*}\"}"
     return
   fi
 
@@ -833,9 +833,9 @@ key_get() {
     fi
     if [[ "$_encrypt" == 1 ]]; then
       _erokey="F${_rokey:1:32}"
-      echo "{\"secret\": \"${_key%%|*}\", \"rosecret\": \"${_rokey}\", \"erosecret\": \"${_erokey}\"}"
+      echo "{\"read_write\": \"${_key%%|*}\", \"read_only\": \"${_rokey}\", \"encryption\": \"${_erokey}\"}"
     else
-      echo "{\"secret\": \"${_key%%|*}\", \"rosecret\": \"${_rokey}\"}"
+      echo "{\"read_write\": \"${_key%%|*}\", \"read_only\": \"${_rokey}\"}"
     fi
   fi
 }
