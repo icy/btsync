@@ -529,8 +529,18 @@ os_type_get() {
   __curl "$(__version_selector getostype getsysteminfo)"
 }
 
+# See also `webui.js#makeVersion`
 version_get() {
-  __curl "$(__version_selector getversion version)"
+  __curl "$(__version_selector getversion version)" \
+  | perl -e '
+      use JSON;
+      my $json = decode_json(<>);
+      my $version = $json->{"version"} || $json->{"value"};
+      my $major = ($version & 0xFF000000) >> 24;
+      my $minor = ($version & 0x00FF0000) >> 16;
+      my $tiny = ($version & 0x0000FFFF);
+      printf "{\"version\": \"%s.%s.%s\", \"major\": %s, \"minor\": %s, \"tiny\": %s}\n", $major, $minor, $tiny, $major, $minor, $tiny;
+    '
 }
 
 # Note: the first match wins!!!
