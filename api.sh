@@ -717,9 +717,45 @@ folder_host_get() {
   fi
 }
 
-# Generate a key-pair, or generate a ro.key from rw.key
+# Generate a key-pair, or generate a ro.key from rw.key.
+#
 # For encryption support, please read the following article
 #   http://antimatrix.org/BTSync/BTSync_Notes.html#encrypted_folders
+#
+# Type of keys
+#
+#   Axxx    RW
+#   Dxxx    ERW   (encryption support, read-write)
+#   Bxxx    RO
+#   Exxx    RO    (un-encrypted folder folder, read-only)
+#   Fxxx    ERO   (encrypted RO folder)
+#
+# Behavior
+#
+#   1. <key> is empty
+#
+#     <encrypt=0>   generate new keypair, print {RW, RO} keys
+#     <encrypt=1>
+#       <master=0>  genereate new keypair, print the RW key
+#       <master=1>  genereate new keypair, push the ERW key
+#                   fetch the ERO key, print {RW, RO, ERO} keys
+#
+#   3. <key> is RW or RO
+#
+#       Select <key>'s prefix and update <encrypt> and <master>
+#         {ERW}, {RW} key => <nothing>
+#         {ERO}, {RO} key => <encrypt> = <master> = 0
+#                            (we can't get private key from a public key)
+#
+#      <encrypt=1>
+#        <master=1> print the key, with new prefix {A -> D}
+#        <master=0> change prefix, push the ERW key,
+#                   fetch ERO, RO key, print {RW, RO, ERO} keys
+#
+#     <encrypt=0>
+#       <master=1>  print the key (don't change anything!!!)
+#       <master=0>  push the key and get/print {RW, RO} keys
+#
 key_get() {
   local _key="$(__input_fetch key)"
   local _encrypt="$(__input_fetch encrypt | __zero_or_one 0)"
@@ -727,6 +763,15 @@ key_get() {
 
   if [[ "${_key:0:1}" == "D" ]]; then
     _encrypt=1
+  fi
+
+  if [[ "${_key:0:1}" == "A" || "${_key:0:1}" == "D" ]]; then
+    __debug "$FUNCNAME: key '$_key' is a (E)RW key"
+  elif [[ -n "${_key}" ]]; then
+    _encrypt=0
+    _master=0
+    echo "{\"rokey\": \"$_key\"}"
+    return
   fi
 
   # Generate a new key-pair and return
