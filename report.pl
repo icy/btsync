@@ -1,10 +1,10 @@
 #!/usr/bin/env perl
 
-# Purpose: print a sample report
+# Purpose: Print a sample report
 # Author : Anh K. Huynh
 # License: MIT
 # Date   : 2014 Aug 21st
-# Usage  : ./api.sh folder_get | ./report.pl
+# Usage  : ./api.sh folder/get | ./report.pl
 
 use JSON;
 
