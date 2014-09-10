@@ -5,7 +5,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
     $ chmod 755 ./api.sh
 
-    $ epport BTSYNC_USER=admin
+    $ export BTSYNC_USER=admin
     $ export BTSYNC_PASSWD="your-very-simple-password"
     $ # export BTSYNC_HOST="localhost:8888"
 
