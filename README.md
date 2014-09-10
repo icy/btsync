@@ -145,7 +145,7 @@ use the official `API` key, that should be the case when `API` end-point
 is on `btsync` network.
 
 That's why I write this script. I can write it in `Ruby`, `Python`;
-but as a sysadmin, `bash` and `Perl` is enough: I use `bash` to glue
+however `bash` and `Perl` is enough ifor a `sysadmin`: I use `bash` to glue
 things, and use `Perl` to read some `JSON` data -- which is unreadable
 from `bash` brain.
 
