@@ -149,6 +149,10 @@ but as a sysadmin, `bash` and `Perl` is enough: I use `bash` to glue
 things, and use `Perl` to read some `JSON` data -- which is unreadable
 from `bash` brain.
 
+## TODO
+
+Support the official `btsync` API:)
+
 ## License
 
 This work is released under a MIT license.
