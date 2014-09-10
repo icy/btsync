@@ -119,7 +119,7 @@ When using `key/get`, please note that there may be a case when
 `folder/create` is invoked to create a temporary shared folder.
 Because the default settings of `btsync` is to allow to use remote
 tracker and relay servers, newly created shared folder will trigger
-`btsync` to send traffice to its home.
+`btsync` to send traffic to its home.
 
 This is *true* for any newly created shared folder, though.
 
