@@ -7,7 +7,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
     $ export BTSYNC_USER=admin
     $ export BTSYNC_PASSWD="your-very-simple-password"
-    $ # export BTSYNC_HOST="localhost:8888"
+    $ # export BTSYNC_HOST="localhost:8888" # this is default
 
 ### Getting browser's cookie/token
 
@@ -21,21 +21,21 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 ### Generating a random key-pair or `RO` key from `RW` key
 
     $ ./api.sh key/get
-    { "rosecret": "B3MF5NHDCWI6JTVUU2R3LYMQDAK2QCEXG",
-      "secret": "AHRAXZOGOMZ7B7VIFL5JK7VRH5URQVHMA" }
+    { "read_only": "B3MF5NHDCWI6JTVUU2R3LYMQDAK2QCEXG",
+      "read_write": "AHRAXZOGOMZ7B7VIFL5JK7VRH5URQVHMA" }
 
     $ ./api.sh key/get encrypt=1  # with encryption support
     {
-       "erosecret" : "FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS",
-       "rosecret" : "EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ",
-       "secret" : "DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE"
+       "encryption" : "FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS",
+       "read_only" : "EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ",
+       "read_write" : "DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE"
     }
 
     $ ./api.sh key/get key=DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE
     {
-       "erosecret" : "FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS",
-       "rosecret" : "EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ",
-       "secret" : "DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE"
+       "encryption" : "FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS",
+       "read_only" : "EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ",
+       "read_write" : "DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE"
     }
 
 ### Creating a directory on the remote
