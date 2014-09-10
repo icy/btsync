@@ -1,14 +1,18 @@
 ## Description
 
 `Bash`-binding for `btsync` API.
-
 `btsync` (aka `Bittorrent Sync`) can be found [here or there].
 
-`btsync` provides API, but you need to register an account at
-`btsync` home page. I simply... don't need that:)
-Because I don't use any API service from `BitTorrentSync`.
+Actually this is a `wrapper` of your `browser` iteractions.
+It isn't the official `btsync` API.
 
-The script supports both `btsync` versions 1.3 and 1.4.
+The script supports both `btsync` 1.3 and `btsync` 1.4.
+
+Please make sure you read the section `Why this cript` for details.
+
+## Usage
+
+See many examples in `examples.md`.
 
 ## Methods
 
@@ -83,10 +87,6 @@ You are welcome to contribute to this project!
 
 More method? Okay, stay tuned!.
 
-## Usage
-
-See many examples in `examples.md`.
-
 ## How it works
 
 The normal steps of a browser session:
@@ -123,12 +123,31 @@ tracker and relay servers, newly created shared folder will trigger
 
 This is *true* for any newly created shared folder, though.
 
-## Missing method
+## Missing methods
 
 `Selective download` must be very cool feature. Now you can only find
 them from the official `btsync` API.
 
 `Getting a list of files from a shared folder` is another missing thing.
+
+## Why this script
+
+`btsync` officialy provides their `API`, but you need to ask them for
+an `API` key. That's free; you just need to wait some hours to get the key.
+
+Though the `API` key comes from `btsync` team, your `API` server is
+**yours**: When you start new `btsync` daemon, the `API` is already there,
+but you just can't use it because you don't have the `unlock key`. Weird.
+
+I don't believe in `btsync` way:) I think `btsync` should provide a way
+so its users can generate as many `API` key as they want. If I have to
+use the official `API` key, that should be the case when `API` end-point
+is on `btsync` network.
+
+That's why I write this script. I can write it in `Ruby`, `Python`;
+but as a sysadmin, `bash` and `Perl` is enough: I use `bash` to glue
+things, and use `Perl` to read some `JSON` data -- which is unreadable
+from `bash` brain.
 
 ## License
 
