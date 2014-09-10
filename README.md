@@ -8,7 +8,7 @@
 `btsync` home page. I simply... don't need that:)
 Because I don't use any API service from `BitTorrentSync`.
 
-So I write a `Bash` script, to get data from my `btsync` instance.
+The script supports both `btsync` versions 1.3 and 1.4.
 
 ## Methods
 
@@ -96,7 +96,39 @@ The normal steps of a browser session:
 * Fetch a valid token from `gui/token.html`
 * Use the `cookie` / `token` pair for any future `JSON` data fetch
 
-Anything more? I don't know.
+The data transferred between the browser and a `btsync` daemon are
+in `JSON` format, and they are almost identical to the official `btsync` API.
+
+The most tricky part is to generate an encryption secret keypair:
+
+1. Generate a random string `foo`, which is actually a master `RW` key;
+2. Invoke `folder/create` to create a shared folder _(`foo`)_ on the server;
+3. Invoke `folder/get` to get information of the `foo` shared folder;
+4. Invoke `folder/delete` to delete the shared folder.
+
+The necessary data can be found on the 3rd step. After the 4th step,
+the temporary folder will be deleted; however, the temporary directory
+still remains on the remote server. For `btsync` 1.3, it is under
+`/tmp/cnystb/`. For `btsync` 1.4, it will be under `.cnystb/` directory
+inside the default folder. Further technical details can be read from
+the implementation of `__key_push_and_pull` method.
+
+## Security issues
+
+When using `key/get`, please note that there may be a case when
+`folder/create` is invoked to create a temporary shared folder.
+Because the default settings of `btsync` is to allow to use remote
+tracker and relay servers, newly created shared folder will trigger
+`btsync` to send traffice to its home.
+
+This is *true* for any newly created shared folder, though.
+
+## Missing method
+
+`Selective download` must be very cool feature. Now you can only find
+them from the official `btsync` API.
+
+`Getting a list of files from a shared folder` is another missing thing.
 
 ## License
 
