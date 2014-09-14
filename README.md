@@ -12,7 +12,7 @@ Please make sure you read the section `Why this cript` for details.
 
 ## Usage
 
-See many examples in `examples.md`.
+See many examples in `examples/` directory.
 
 ## Methods
 
