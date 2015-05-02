@@ -140,12 +140,12 @@ Though the `API` key comes from `btsync` team, your `API` server is
 but you just can't use it because you don't have the `unlock key`. Weird.
 
 I don't believe in `btsync` way:) I think `btsync` should provide a way
-so its users can generate as many `API` key as they want. If I have to
+so its users can generate as many `API` keys as they want. If I have to
 use the official `API` key, that should be the case when `API` end-point
 is on `btsync` network.
 
 That's why I write this script. I can write it in `Ruby`, `Python`;
-however `bash` and `Perl` is enough for a `sysadmin`: I use `bash` to glue
+however `bash` and `Perl` are enough for a `sysadmin`: I use `bash` to glue
 things, and use `Perl` to read some `JSON` data -- which is unreadable
 from `bash` brain.
 
