@@ -266,6 +266,7 @@ __validate_method() {
   'folder/host/delete') ;;
   'folder/delete') ;;
   'license/update') ;;
+  'raw/get') ;;
   *) echo "$1"; return 1 ;;
   esac
   echo "$1" | sed -e 's#/#_#g'
@@ -500,6 +501,10 @@ folder_get() {
   else
     __curl "getsyncfolders&discovery=$_discovery"
   fi
+}
+
+raw_get() {
+  __curl "$@"
 }
 
 setting_get() {

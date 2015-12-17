@@ -84,6 +84,7 @@ You are welcome to contribute to this project!
   not check for duplication. This method will delete **all** entries
   that match user's criteria.
 * `folder/delete`: Delete a shared folder. Arguments: As in `folder/get`.
+* `raw/get`: To execute an arbitrary method.
 
 More method? Okay, stay tuned!.
 

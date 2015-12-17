@@ -118,3 +118,22 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
         },
         ...
     }
+
+### Executing an arbitrary API method
+
+Well, `btsync` exposes a list of system folder.
+
+    ./api.sh raw/get "getdir&dir=/etc/" | json_pp
+    {
+      folders" : [
+        "/etc//alternatives",
+        "/etc//apt",
+        "/etc//bash_completion.d",
+        "/etc//cron.daily",
+        "/etc//default",
+        "/etc//dpkg",
+        "/etc//fstab.d",
+        "/etc//init",
+        ...
+      ]
+    }
