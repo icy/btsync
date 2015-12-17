@@ -123,7 +123,7 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
 
 Well, `btsync` exposes a list of system folder.
 
-    ./api.sh raw/get "getdir&dir=/etc/" | json_pp
+    $ ./api.sh raw/get "getdir&dir=/etc/" | json_pp
     {
       folders" : [
         "/etc//alternatives",
