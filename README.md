@@ -1,3 +1,16 @@
+## Table of Contents
+
+* [Description](#description)
+* [Usage](#usage)
+* [Methods](#methods)
+* [How it works](#how-it-works)
+# [Security issues](#security-issues)
+# [TODO](#todo)
+# [Notes](#notes)
+# [Why this script](#why-this-script)
+# [Author](#author)
+# [License](#license)
+
 ## Description
 
 `Bash`-binding for `btsync` API.
@@ -154,7 +167,7 @@ from `bash` brain.
 
 Support the official `btsync` API:)
 
-## Note
+## Notes
 
 `btsync` team seems to remove/disable public access to my former topic.
 The topic is still available here too
