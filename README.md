@@ -4,12 +4,12 @@
 * [Usage](#usage)
 * [Methods](#methods)
 * [How it works](#how-it-works)
-# [Security issues](#security-issues)
-# [TODO](#todo)
-# [Notes](#notes)
-# [Why this script](#why-this-script)
-# [Author](#author)
-# [License](#license)
+* [Security issues](#security-issues)
+* [TODO](#todo)
+* [Notes](#notes)
+* [Why this script](#why-this-script)
+* [Author](#author)
+* [License](#license)
 
 ## Description
 
