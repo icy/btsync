@@ -154,6 +154,14 @@ from `bash` brain.
 
 Support the official `btsync` API:)
 
+## Note
+
+`btsync` team seems to remove/disable public access to my former topic.
+The topic is still available here too
+  https://web.archive.org/web/20150204105418/http://forum.bittorrent.com/topic/31198-btsync-api-for-bash-without-api-key
+
+Wtf, `btsync` team?
+
 ## License
 
 This work is released under a MIT license.
