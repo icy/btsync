@@ -231,7 +231,7 @@ __version_detect() {
   __debug "$FUNCNAME: BTSYNC_VERSION = $BTSYNC_VERSION"
 
   if [[ -z "$BTSYNC_VERSION" ]]; then
-    __exit "Unable to detect btsync version"
+    __exit "Unable to detect btsync version. Is btsync running?"
   fi
 }
 
