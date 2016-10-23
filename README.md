@@ -26,6 +26,7 @@ Please make sure you read the section `Why this cript` for details.
 ## Usage
 
 See many examples in `examples/` directory.
+[![Build Status](https://travis-ci.org/icy/cnystb.svg?branch=master)](https://travis-ci.org/icy/cnystb)
 
 ## Methods
 
