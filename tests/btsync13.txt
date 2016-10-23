@@ -25,9 +25,6 @@ ou \"linux\"
 in setting/get
 ou \"devicename\": \"[a-z0-9]+\",.+\"listeningport\": 8889
 
-in folder/get
-ou \"folders\": \[[[:space:]]+\],
-
 in os/dir/create 'dir=/btsync/foobar'
 ou \"path\": \"/btsync/foobar
 
@@ -59,3 +56,31 @@ in raw/get 'getdir&dir=/etc/'
 ou \"folders\":.+/etc//init.d
 ou /etc//modprobe.d
 ou etc//slitaz
+
+in folder/get
+ou \"folders\": \[[[:space:]]+\],
+
+in folder/get key=xxxxxxxxxxxxx
+ou \"error\": 900,.+The path you specified is not valid
+
+in folder/get dir=/btsync/foobar key=xxxxxxxxxxxxx
+ou \"error\": 900,.+The path you specified is not valid
+
+in folder/create dir=/btsync/foobar key=xxxxxxxxxxxxx
+ou \"error\": 201,.+This secret is invalid.
+
+in ! export TESTKEY=AACSYUQPTAWRTUP7UYKFEWO2EDYDRIOPI
+in folder/create dir=/btsync/foobar key=$TESTKEY
+ou \"error\": 0 }
+
+in folder/create dir=/btsync/foobar key=xxxxxxxxxxxxx
+ou \"error\": 201,.+This secret is invalid.
+
+in folder/create dir=/btsync/foobar
+ou \"error\": 200,.+Selected folder is already added to BitTorrent Sync.
+
+in folder/get dir=/btsync/foobar
+ou \"secret\":\"$TESTKEY\"
+
+in folder/get key=$TESTKEY
+ou \"secret\":\"$TESTKEY\"
