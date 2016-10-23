@@ -2,6 +2,8 @@
 
 im icymatter/slitaz40-btsync14
 
+in ! export BTSYNC_DEBUG=debug
+
 in license/update
 ou \"status\": 200,
 
@@ -40,9 +42,21 @@ ou Access to destination folder not permitted
 in os/dir/create 'dir=/btsync/sync/foobar'
 ou \"path\": \"/btsync/sync/foobar
 
+# btsync14 probably has a bug. In our Docker environment, #
+# /home/btsync is a symlink of /btsync. We can create new directory
+# under /btsync/sync, but we can't create new one under /home/btsync/sync.
+in os/dir/create 'dir=/home/btsync/sync/foobar2'
+ou \"error\": 108
+ou Access to destination folder not permitted
+
 in os/dir/create 'dir=/btsync/sync/foobar'
 ou \"path\": \"/btsync/sync/foobar
 ou Destination folder already exists
+
+# btsync-14 is better now
+in os/dir/create 'dir=/btsync/foo/bar/good'
+ou \"error\": 108
+ou Access to destination folder not permitted
 
 in key/get
 ou \"read_only\": \"B[A-Z0-9]{32}\"
@@ -90,3 +104,6 @@ ou \"secret\":\"$TESTKEY\"
 
 in folder/get key=$TESTKEY
 ou \"secret\":\"$TESTKEY\"
+
+in folder/setting/get
+ou { \"folders\": { \"default\": \"/btsync/sync/\" } }
