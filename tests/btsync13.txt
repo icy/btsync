@@ -28,9 +28,17 @@ ou \"devicename\": \"[a-z0-9]+\",.+\"listeningport\": 8889
 in os/dir/create 'dir=/btsync/foobar'
 ou \"path\": \"/btsync/foobar
 
+# btsync13 is crazy. It can create nested folders =))
+in os/dir/create 'dir=/btsync/foo/bar/good'
+ou \"path\": \"/btsync/foo/bar/good
+
 # Duplication won't be a problem !!
 in os/dir/create 'dir=/btsync/foobar'
 ou \"path\": \"/btsync/foobar
+
+# symlink is not a problem.
+in os/dir/create 'dir=/home/btsync/sync/foobar2'
+ou \"path\": \"/home/btsync/sync/foobar2
 
 in os/dir/create 'dir=/root/test'
 ou \"error\": 101,.+Don't have permission
@@ -84,3 +92,6 @@ ou \"secret\":\"$TESTKEY\"
 
 in folder/get key=$TESTKEY
 ou \"secret\":\"$TESTKEY\"
+
+in folder/setting/get
+ou { \"folders\": { \"default\": \"/home/btsync/sync/\" } }
