@@ -59,6 +59,8 @@ _test() {
 
       cd ./tmp/ || _exit_with_docker 1 "$_basename"
 
+      echo >&2 ":: Sleeping 2 seconds..."
+      sleep 2s
       bash "$PWD/$_basename.sh" > "$_basename.${_img//\//-}.log"
     )
 
