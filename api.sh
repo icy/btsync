@@ -440,7 +440,18 @@ __key_push_and_pull() {
       )"
 
     __debug "$FUNCNAME: default remote directory => $_defdir"
-    _defdir="$_defdir/.cnystb/$_random"
+
+    # For the latest version of 1.4:
+    # ~~~
+    # Well, we need to create a temporary directory first.
+    # new 1.4 doesn't allow to create nested folder... but wait,
+    # if this default folder is under a symlink we can't create
+    # new directory...
+    #
+    ( export __BTSYNC_PARAMS="dir=$_defdir/cnystb";
+      os_dir_create | __debug_cat "$FUNCNAME/os/dir/create" )
+
+    _defdir="$_defdir/cnystb/$_random"
   else
     _defdir="/tmp/cnystb/$_random"
   fi
