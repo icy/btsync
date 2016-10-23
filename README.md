@@ -172,11 +172,13 @@ Support the official `btsync` API:)
 
 ## Notes
 
-`btsync` team seems to remove/disable public access to my former topic.
-The topic is still available here too
-  https://web.archive.org/web/20150204105418/http://forum.bittorrent.com/topic/31198-btsync-api-for-bash-without-api-key
-
-Wtf, `btsync` team?
+* `btsync` team seems to remove/disable public access to my former topic.
+  The topic is still available here too
+    https://web.archive.org/web/20150204105418/http://forum.bittorrent.com/topic/31198-btsync-api-for-bash-without-api-key
+* `btsync-14` can't handle symbolic link. If the default folder is `/home/btsync`
+  which is a symbolic link to `/btsync`, the you can't create new folder/directory
+  `/home/btsync/foobar/`. Maybe `btsync` team was trying to fix an arbitrary folder creating
+  in the previous version (1.3). See `tests/*` for more details.
 
 ## License
 
