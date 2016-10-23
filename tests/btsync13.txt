@@ -28,6 +28,16 @@ ou \"devicename\": \"[a-z0-9]+\",.+\"listeningport\": 8889
 in folder/get
 ou \"folders\": \[[[:space:]]+\],
 
+in os/dir/create 'dir=/btsync/foobar'
+ou \"path\": \"/btsync/foobar
+
+# Duplication won't be a problem !!
+in os/dir/create 'dir=/btsync/foobar'
+ou \"path\": \"/btsync/foobar
+
+in os/dir/create 'dir=/root/test'
+ou \"error\": 101,.+Don't have permission
+
 # slitaz output:
 # { "folders": [ "/etc//init.d", "/etc//modprobe.d", "/etc//slitaz", "/etc//ssl" ] }
 in raw/get 'getdir&dir=/etc/'
