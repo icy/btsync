@@ -37,6 +37,21 @@ ou \"path\": \"/btsync/foobar
 
 in os/dir/create 'dir=/root/test'
 ou \"error\": 101,.+Don't have permission
+# this is a Geany trick '
+
+in key/get
+ou \"read_only\": \"B[A-Z0-9]{32}\"
+ou \"read_write\": \"A[A-Z0-9]{32}\"
+
+in key/get encrypt=1
+ou \"read_only\": \"E[A-Z0-9]{58}\"
+ou \"read_write\": \"D[A-Z0-9]{32}\"
+ou \"encryption\": \"F[A-Z0-9]{32}\"
+
+in key/get key=DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE
+ou \"read_only\": \"EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ\"
+ou \"read_write\": \"DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE\"
+ou \"encryption\": \"FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS\"
 
 # slitaz output:
 # { "folders": [ "/etc//init.d", "/etc//modprobe.d", "/etc//slitaz", "/etc//ssl" ] }
