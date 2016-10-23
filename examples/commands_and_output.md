@@ -9,6 +9,12 @@ the script by setting `BTSYNC_COOKIE` and `BTSYNC_TOKEN` variables.
     $ export BTSYNC_PASSWD="your-very-simple-password"
     $ # export BTSYNC_HOST="localhost:8888" # this is default
 
+### Accepting license
+
+    $ ./api.sh license/update
+
+    { "status": 200, "value": { "licenseagreed": true, "passwordset": true } }
+
 ### Getting browser's cookie/token
 
     $ ./api.sh curl/header/get
