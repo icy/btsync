@@ -1,0 +1,92 @@
+#!/bin/sh
+
+im icymatter/slitaz40-btsync14
+
+in license/update
+ou \"status\": 200,
+
+in license/update
+ou \"status\": 400
+ou unknown function
+
+# output:
+#   {"cookie": "kiV0IBn5viFwU1caWmuP", "token": "uEU6tNDhKhM4bV5WX
+in curl/header/get
+ou \"cookie\": \"[a-zA-Z0-9]{10,}\".+\"token\":
+
+in cookie/get
+ou \"cookie\": \"[a-zA-Z0-9]{10,}\".+
+
+in token/get
+ou \"token\": \"[a-zA-Z0-9_\-]{10,}\".+
+
+in version/get
+ou \"version\": \"1\.4.+\"
+
+in os/type/get
+ou \"linux\"
+
+in setting/get
+ou \"devicename\": \"[a-z0-9]+\",.+\"listeningport\": 8889
+
+in os/dir/create 'dir=/btsync/foobar'
+ou \"error\": 108
+ou Access to destination folder not permitted
+
+in os/dir/create 'dir=/root/test'
+ou \"error\": 108
+ou Access to destination folder not permitted
+
+in os/dir/create 'dir=/btsync/sync/foobar'
+ou \"path\": \"/btsync/sync/foobar
+
+in os/dir/create 'dir=/btsync/sync/foobar'
+ou \"path\": \"/btsync/sync/foobar
+ou Destination folder already exists
+
+in key/get
+ou \"read_only\": \"B[A-Z0-9]{32}\"
+ou \"read_write\": \"A[A-Z0-9]{32}\"
+
+in key/get encrypt=1
+ou \"read_only\": \"E[A-Z0-9]{58}\"
+ou \"read_write\": \"D[A-Z0-9]{32}\"
+ou \"encryption\": \"F[A-Z0-9]{32}\"
+
+in key/get key=DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE
+ou \"read_only\": \"EMZXEH4PWSA62N7LAJNHJV57O42X5PEFSZHBBS5BN7BNVPNNHF4LFVFREXQ\"
+ou \"read_write\": \"DZ4PN4GAEBSHBEOGDLVKQS5DIKXPCCGTE\"
+ou \"encryption\": \"FMZXEH4PWSA62N7LAJNHJV57O42X5PEFS\"
+
+in raw/get 'getdir&dir=/etc/'
+ou \"error\": 108
+ou Access to destination folder not permitted
+
+in folder/get
+ou \"folders\": \[[[:space:]]+\],
+
+in folder/get key=xxxxxxxxxxxxx
+ou \"error\": 900,.+The path you specified is not valid
+
+in folder/get dir=/btsync/sync/foobar key=xxxxxxxxxxxxx
+ou \"error\": 900,.+The path you specified is not valid
+
+in folder/create dir=/btsync/sync/foobar key=xxxxxxxxxxxxx
+ou \"error\": 201,.+This secret is invalid.
+
+in ! export TESTKEY=AACSYUQPTAWRTUP7UYKFEWO2EDYDRIOPI
+in folder/create dir=/btsync/sync/foobar key=$TESTKEY
+ou \"status\": 200
+ou \"path\": \"/btsync/sync/foobar
+
+in folder/create dir=/btsync/sync/foobar key=xxxxxxxxxxxxx
+ou \"error\": 201,.+This secret is invalid.
+
+in folder/create dir=/btsync/sync/foobar
+ou \"error\": 200,.+Selected folder is already added to BitTorrent Sync.
+
+in folder/get dir=/btsync/sync/foobar
+ou \"secret\":\"$TESTKEY\"
+
+in folder/get key=$TESTKEY
+ou \"secret\":\"$TESTKEY\"
