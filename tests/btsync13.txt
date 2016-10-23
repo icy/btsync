@@ -1,0 +1,17 @@
+#!/bin/sh
+
+im icymatter/slitaz40-btsync13
+
+in license/update
+ou .+
+
+# output:
+#   {"cookie": "kiV0IBn5viFwU1caWmuP", "token": "uEU6tNDhKhM4bV5WX
+in curl/header/get
+ou \"cookie\": \"[a-zA-Z0-9]{10,}\".+\"token\":
+
+in cookie/get
+ou \"cookie\": \"[a-zA-Z0-9]{10,}\".+
+
+in token/get
+ou \"token\": \"[a-zA-Z0-9_\-]{10,}\".+
