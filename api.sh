@@ -80,6 +80,10 @@ __perl_check() {
 
   perl -e 'use JSON' >/dev/null 2>&1 \
   || __exit "perl/JSON not found"
+
+  perl -e 'use URI::Escape' >/dev/null 2>&1 \
+  || __exit "perl/URI::Escape not found"
+
   export __BTSYNC_PERL_OK=1
 }
 
