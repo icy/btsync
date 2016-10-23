@@ -15,3 +15,15 @@ ou \"cookie\": \"[a-zA-Z0-9]{10,}\".+
 
 in token/get
 ou \"token\": \"[a-zA-Z0-9_\-]{10,}\".+
+
+in version/get
+ou \"version\": \"1\.3.+\"
+
+in os/type/get
+ou \"linux\"
+
+in setting/get
+ou \"devicename\": \"[a-z0-9]+\",.+\"listeningport\": 8889
+
+in folder/get
+ou \"folders\": \[[[:space:]]+\],
