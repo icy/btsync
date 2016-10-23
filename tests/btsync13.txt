@@ -94,4 +94,4 @@ in folder/get key=$TESTKEY
 ou \"secret\":\"$TESTKEY\"
 
 in folder/setting/get
-ou { \"folders\": { \"default\": \"/home/btsync/sync/\" } }
+ou { \"folders\": { \"default\": \"/btsync/sync/\" } }
