@@ -6,4 +6,4 @@ services:
 script:
 # lib{json,uri}-perl is required for `make shellcheck`
 - sudo apt-get install libjson-perl
-- make all
+- cd tests && make all
