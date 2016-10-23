@@ -3,7 +3,7 @@
 # Purpose: Execute test using data from foobar.txt
 
 _exit_with_docker() {
-  _ret="${1:0}"; shift
+  _ret="${1:-0}"; shift
   echo >&2 ":: Removing container cnystb-$@..."
   docker rm -f "cnystb-$@"
   echo >&2 ":: (done)"
