@@ -6,8 +6,8 @@ _exit_with_docker() {
   _ret="${1:-0}"; shift
   echo >&2 ":: Removing container cnystb-$@..."
   docker rm -f "cnystb-$@"
-  echo >&2 ":: (done)"
-  return "$_ret"
+  echo >&2 ":: (done. all steps return $_ret)"
+  return $_ret
 }
 
 # $1: Input file
@@ -57,18 +57,18 @@ _test() {
           return 1
         }
 
-      cd ./tmp/ || _exit_with_docker 1 "$_basename"
+      cd ./tmp/ || { _exit_with_docker 1 "$_basename" || return ; }
 
-      echo >&2 ":: Sleeping 2 seconds..."
-      sleep 2s
+      echo >&2 ":: Sleeping 1 seconds..."
+      sleep 1s
       bash "$PWD/$_basename.sh" > "$_basename.${_img//\//-}.log"
     )
 
     if [[ $? -ge 1 ]]; then
       echo >&2 "FAIL: $_basename/$_img"
-      _exit_with_docker 1 "$_basename"
+      _exit_with_docker 1 "$_basename" || return
     else
-      _exit_with_docker 0 "$_basename"
+      _exit_with_docker 0 "$_basename" || return
     fi
   done
 
