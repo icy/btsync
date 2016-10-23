@@ -88,11 +88,11 @@ elsif gs = $_.match(/^ou(.*)/)
     puts "  ret=\"$(grep -Ec \"#{expected}\" $F_TMP)\""
     puts "  if [ $ret -eq 0 ]; then"
   end
-  puts "    _fail 'Expected \"#{expected}\"'"
+  puts "    _fail Expected \"#{expected}\""
   puts "    N_FAIL=$(( N_FAIL + 1 ))"
   puts "    T_FAIL=$(( T_FAIL + 1 ))"
   puts "  else"
-  puts "    _pass 'Matched \"#{expected}\"'"
+  puts "    _pass Matched \"#{expected}\""
   puts "  fi"
   puts "else"
   puts "  N_FAIL=$(( N_FAIL + 1 ))"
