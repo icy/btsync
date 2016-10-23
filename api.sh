@@ -939,7 +939,7 @@ speed_get() {
 }
 
 license_update() {
-  __curl "$(__version_selector accept licenseagreed)"
+  __curl "$(__version_selector accept setlicenseagreed)&value=true"
 }
 
 ## main routine
