@@ -2,7 +2,7 @@
 
 im icymatter/slitaz40-btsync14
 
-in ! export BTSYNC_DEBUG=debug
+# in ! export BTSYNC_DEBUG=debug
 
 in license/update
 ou \"status\": 200,
