@@ -428,7 +428,9 @@ __key_push_and_pull() {
     return
   fi
 
-  if [[ "$BTSYNC_VERSION" == "1.4" ]]; then
+  if [[ "$BTSYNC_VERSION" == "1.3" ]]; then
+    _defdir="/tmp/cnystb/$_random"
+  else
     _defdir="$( \
       export __BTSYNC_PARAMS="";
       folder_setting_get \
@@ -452,8 +454,6 @@ __key_push_and_pull() {
       os_dir_create | __debug_cat "$FUNCNAME/os/dir/create" )
 
     _defdir="$_defdir/cnystb/$_random"
-  else
-    _defdir="/tmp/cnystb/$_random"
   fi
 
   ( export __BTSYNC_PARAMS="dir=$_defdir###key=$_key";
@@ -879,33 +879,29 @@ folder_create() {
 
   __debug "$FUNCNAME: __BTSYNC_PARAMS => $__BTSYNC_PARAMS"
 
-  if [[ "$BTSYC_VERSION" == "1.4" ]]; then
-    _dir="$(__input_fetch dir)"
-  else
-    _dir="$(os_dir_create)"
+  _dir="$(os_dir_create)"
 
-    __tmp="$( \
-      echo "$_dir" \
-      | perl -e '
-          use JSON;
-          my $dir = decode_json(<>);
-          my $path = $dir->{"path"};
-          if ($path) {
-            print $path;
-          }
-          else {
-            exit(1);
-          }
-        '
-      )"
+  __tmp="$( \
+    echo "$_dir" \
+    | perl -e '
+        use JSON;
+        my $dir = decode_json(<>);
+        my $path = $dir->{"path"};
+        if ($path) {
+          print $path;
+        }
+        else {
+          exit(1);
+        }
+      '
+    )"
 
-    if [[ -z "$__tmp" ]]; then
-      echo "$_dir"
-      exit
-    fi
+  if [[ -z "$__tmp" ]]; then
+    echo "$_dir"
+    exit
   fi
 
-  _dir="$(echo -n "$__tmp" | __url_encode)"
+  _dir="$(echo -n "${__tmp}" | __url_encode)"
 
   _key="$(export __BTSYNC_PARAMS="$__BTSYNC_PARAMS###master=1"; __input_fetch_key)"
   if [[ "$?" -ge 1 ]]; then
