@@ -10,6 +10,7 @@ export BTSYNC_TOKEN="${BTSYNC_TOKEN:-}"
 export BTSYNC_COOKIE="${BTSYNC_COOKIE:-}"
 export BTSYNC_HOST="${BTSYNC_HOST:-localhost:8888}"
 export BTSYNC_VERSION=
+export BTSYNC_WEBPORT=
 
 export __now="$(date +%s)"
 export __user="${BTSYNC_USER:-admin}"
