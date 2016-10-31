@@ -51,6 +51,7 @@ __curl() {
     -H "Referer: http://$BTSYNC_HOST/gui/" \
     -H "User-Agent: $__agent" \
     -H "Cookie: GUID=${BTSYNC_COOKIE}" \
+    -H "Cookie: GUID_${BTSYNC_WEBPORT}=${BTSYNC_COOKIE}" \
     -H 'X-Requested-With: XMLHttpRequest' \
     -H 'Accept-Language: en-US,en;q=0.5' \
     -H 'Accept: application/json, text/javascript, */*; q=0.01' \
@@ -85,6 +86,21 @@ __perl_check() {
   || __exit "perl/URI::Escape not found"
 
   export __BTSYNC_PERL_OK=1
+}
+
+__phantomjs_check() {
+  [[ -z "$__BTSYNC_PHANTOMJS_OK" ]] || return 0
+
+  case "$BTSYNC_VERSION" in
+  "2.4")
+    phantomjs -v >/dev/null 2>&1 \
+    || __exit "phantomjs not found"
+    ;;
+  *)
+    ;;
+  esac
+
+  export __BTSYNC_PHANTOMJS_OK=1
 }
 
 # Read user input from $__BTSYNC_PARAMS. This variable is a list
@@ -128,9 +144,16 @@ __url_encode() {
 
 # Return the token a valid token for the session
 __token_get() {
+  local _cookie_name
+
+  case "$BTSYNC_VERSION" in
+  "2.4") _cookie_name=GUID_${BTSYNC_WEBPORT} ;;
+  *)     _cookie_name=GUID ;;
+  esac
+
   __curl_get "gui/token.html?t=$__now" \
     -X POST \
-    -H "Cookie: GUID=${BTSYNC_COOKIE}" \
+    -H "Cookie: $_cookie_name=${BTSYNC_COOKIE}" \
     -H 'X-Requested-With: XMLHttpRequest' \
     -H 'Accept: */*' \
   | sed -e 's/[<>]/\n/g' \
@@ -138,11 +161,33 @@ __token_get() {
 }
 
 # Return the cookie for the session
+# btsync-2.4.1:
+#   cookie is writtedn by Javascript, and curl can't get from them..
 __cookie_get() {
-  __curl_get "gui/" -o /dev/null -c - \
-  | grep GUID \
-  | awk '{print $NF}'
-  [[ "${PIPESTATUS[1]}" == "0" ]]
+  local __tmp
+
+  case "$BTSYNC_VERSION" in
+  "2.4")
+    __tmp="$(
+      phantomjs "$(dirname "${BASH_SOURCE[0]:-./}")/cookies.js" \
+      | grep GUID_ | tail -1)"
+
+    read BTSYNC_WEBPORT __tmp < <(echo "$__tmp" | awk -F'(GUID_)|=' '{printf("%s %s\n", $2, $3);}')
+
+    __debug "$FUNCNAME" "BTSYNC_WEBPORT: $BTSYNC_WEBPORT"
+    export BTSYNC_WEBPORT
+    echo $__tmp
+
+    [[ -n "${__tmp}" ]]
+    ;;
+  *)
+    __curl_get "gui/" -o /dev/null -c - \
+    | grep GUID \
+    | awk '{print $NF}'
+
+    [[ "${PIPESTATUS[1]}" == "0" ]]
+    ;;
+  esac
 }
 
 # Print error message in JSON format, and exit(1)
@@ -226,8 +271,19 @@ __version_detect() {
     export BTSYNC_VERSION="1.4"
     export __BTSYNC_DIR_ATTR="path"
   elif [[ "${_ret[0]}" == "0" ]]; then
-    export BTSYNC_VERSION="1.3"
-    export __BTSYNC_DIR_ATTR="name"
+    (
+      # In btsync 2.4.1, cookie is not written to STDOUT
+      __curl_get 'gui/' -o /dev/null -c - \
+      | grep -q 'GUID'
+    )
+
+    if [[ $? -ge 1 ]]; then
+      export BTSYNC_VERSION="2.4"
+      export __BTSYNC_DIR_ATTR="path"
+    else
+      export BTSYNC_VERSION="1.3"
+      export __BTSYNC_DIR_ATTR="name"
+    fi
   else
     export BTSYNC_VERSION=""
   fi
@@ -240,9 +296,24 @@ __version_detect() {
 }
 
 __version_selector() {
+  local _third=
+
+  if [[ -z "${2:-}" ]]; then
+    _third="${2:-}"
+  else
+    _third="${3}"
+  fi
+
   case $BTSYNC_VERSION in
     "1.3") echo "$1" ;;
     "1.4") echo "$2" ;;
+    "2.4")
+      if [[ "$_third" == "-" ]]; then
+        echo "$2";
+      else
+        echo "${_third:-$2}";
+      fi
+      ;;
   esac
 }
 
@@ -946,13 +1017,26 @@ speed_get() {
 }
 
 license_update() {
-  __curl "$(__version_selector accept setlicenseagreed)&value=true"
+  case "$BTSYNC_VERSION" in
+  2.4)
+    __curl "setlicenseagreed&allowemptypassword=true&currentusertermsversion=1&value=true"
+    ;;
+  *)
+    __curl "$(__version_selector accept setlicenseagreed -)&value=true"
+    ;;
+  esac
 }
 
 ## main routine
 
 __perl_check
 __version_detect
+__phantomjs_check
+
+# We need to detect BTSYNC_WEBPORT
+case "$BTSYNC_VERSION" in
+"2.4") __cookie_get ;;
+esac
 
 __method="${1:-}" ; shift
 __method="$(__validate_method $__method)" \
