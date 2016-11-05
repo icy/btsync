@@ -2,6 +2,8 @@
 
 im icymatter/slitaz40-btsync13
 
+in ! export BTSYNC_DEBUG=debug
+
 in license/update
 ou .+
 
