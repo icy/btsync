@@ -89,6 +89,22 @@ __perl_check() {
   export __BTSYNC_PERL_OK=1
 }
 
+# these tools are required by `random`-generator.
+__base_tools_check() {
+  case "$BTSYNC_VERSION" in
+  "2.4")
+    for _cmd in cat tr fold head; do
+      command -v "$_cmd" >/dev/null 2>&1 \
+      || __exit "$FUNCNAME: command not found '$_cmd'"
+    done
+    ;;
+  *)
+    ;;
+  esac
+
+  return 0
+}
+
 __phantomjs_check() {
   [[ -z "$__BTSYNC_PHANTOMJS_OK" ]] || return 0
 
@@ -164,6 +180,8 @@ __token_get() {
 # Return the cookie for the session
 # btsync-2.4.1:
 #   cookie is writtedn by Javascript, and curl can't get from them..
+#   FIXME: In this version, we also need to export the PORT number
+#   FIXME: hence, this method must be invoked in the main context at least once.
 __cookie_get() {
   local __tmp
 
@@ -173,13 +191,17 @@ __cookie_get() {
       phantomjs "$(dirname "${BASH_SOURCE[0]:-./}")/cookies.js" \
       | grep GUID_ | tail -1)"
 
+    __debug "$FUNCNAME" "phantomjs output: $__tmp"
+
     read BTSYNC_WEBPORT __tmp < <(echo "$__tmp" | awk -F'(GUID_)|=' '{printf("%s %s\n", $2, $3);}')
 
-    __debug "$FUNCNAME" "BTSYNC_WEBPORT: $BTSYNC_WEBPORT"
+    __debug "$FUNCNAME" "BTSYNC_WEBPORT: $BTSYNC_WEBPORT, cookie: $__tmp"
     export BTSYNC_WEBPORT
+
+    # NOTE: Please don't use __BTSYNC_ECHO
     echo $__tmp
 
-    [[ -n "${__tmp}" ]]
+    [[ -n "${__tmp}" ]] && [[ -n "$BTSYNC_WEBPORT" ]]
     ;;
   *)
     __curl_get "gui/" -o /dev/null -c - \
@@ -258,6 +280,13 @@ __zero_or_one() {
       ;;
     esac
   done
+}
+
+# Thanks to @Fuujin
+# See also http://www.perlmonks.org/?node_id=233023
+__randomize_32_chars() {
+  # WRONG: perl -le 'print map { (A..Z,0..9)[rand 62] } 0..pop' 32
+  cat /dev/urandom | tr -dc 'A-Z0-9' | fold -w 32 | head -n 1
 }
 
 __version_detect() {
@@ -454,6 +483,33 @@ __folder_get_name_and_key() {
   fi
 }
 
+__randomize_key_before_24() {
+  local _random
+
+  _random="$( \
+    __curl "generatesecret" \
+    | perl -e '
+        use JSON;
+        my $json = decode_json(<>);
+        printf "%s\n", $json->{"secret"} || $json->{"value"}->{"secret"};
+      '
+    )"
+
+  __debug "$FUNCNAME: random value => $_random"
+
+  echo "$_random" | grep -Esq '^[A-Z2-7]{33}$'
+  if [[ $? -ge 1 ]]; then
+    echo ""
+    return 1
+  fi
+
+  echo "$_random"
+}
+
+__randomize_key_since_24() {
+  __randomize_32_chars
+}
+
 # Input : A primary <key> as the first argument ($1)
 # Output: The <rokey> of the <rwkey>, the <erokey> (if any)
 # Desc. : This method is primarily used by <key/get>. The idea is simple.
@@ -483,22 +539,27 @@ __key_push_and_pull() {
     return
   fi
 
-  _random="$( \
-    __curl "generatesecret" \
-    | perl -e '
-        use JSON;
-        my $json = decode_json(<>);
-        printf "%s\n", $json->{"secret"} || $json->{"value"}->{"secret"};
-      '
-    )"
+  case "$BTSYNC_VERSION" in
+  "2.4")
+    _random="$(__randomize_key_since_24)"
+    if [[ $? -ge 1 ]]; then
+      # FIXME: Explain why the output is | here. It's very inconsistent.
+      echo "|"
+      return 1
+    else
+      _random="A$_random"
+    fi
+    ;;
 
-  __debug "$FUNCNAME: random value => $_random"
-
-  echo "$_random" | grep -Esq '^[A-Z2-7]{33}$'
-  if [[ $? -ge 1 ]]; then
-    echo "|"
-    return
-  fi
+  *)
+    _random="$(__randomize_key_before_24)"
+    if [[ $? -ge 1 ]]; then
+      # FIXME: Explain why the output is | here. It's very inconsistent.
+      echo "|"
+      return
+    fi
+    ;;
+  esac
 
   if [[ "$BTSYNC_VERSION" == "1.3" ]]; then
     _defdir="/tmp/cnystb/$_random"
@@ -1036,7 +1097,11 @@ __phantomjs_check
 
 # We need to detect BTSYNC_WEBPORT
 case "$BTSYNC_VERSION" in
-"2.4") __cookie_get ;;
+"2.4")
+  __base_tools_check
+  __cookie_get >/dev/null \
+  || __exit "Unable to get cookie/web port information"
+  ;;
 esac
 
 __method="${1:-}" ; shift
