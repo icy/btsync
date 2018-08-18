@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/icy/cnystb.svg?branch=master)](https://travis-ci.org/icy/cnystb)
+[![Build Status](https://travis-ci.org/icy/btsync.svg?branch=master)](https://travis-ci.org/icy/btsync)
 
 ## Table of Contents
 
